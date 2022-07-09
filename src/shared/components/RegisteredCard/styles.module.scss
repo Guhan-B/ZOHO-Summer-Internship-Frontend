@@ -1,0 +1,111 @@
+.wrapper {
+    border: 1px solid #e4e4e4;
+    transition: 0.2s all ease-in-out;
+    cursor: pointer;
+    border-radius: 3px;
+
+    .sport_status {
+        margin-bottom: 0;
+        text-align: center;
+        padding: 0.5rem;
+
+        &.winner {
+            background-color: rgba(46, 204, 112, 0.2);
+            color: #2ecc71;
+        }
+
+        &.runner {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+
+        &.lost {
+            background-color: rgba(127, 140, 141, 0.2);
+            color: #7f8c8d;
+        }
+
+        &.upcoming {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+
+        &.disqualified {
+            background-color: rgba(231, 77, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        p {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    .sport_details {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+
+        h3 {
+            margin-bottom: 1rem;
+        }
+
+        .sport_description {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: justify;
+        }
+
+        .sport_deadline {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #3498db;
+        }
+
+        div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+
+            .sport_name {
+                color: #3498db;
+                background-color: rgba(52, 152, 219, 0.2);
+                text-transform: uppercase;
+                font-size: 0.9rem;
+                padding: 0.25rem 0.75rem;
+                border-radius: 4px;
+                font-weight: 500;
+            }
+
+            .sport_info {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+
+                span {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.1rem;
+                    color: #3498db;
+                    font-weight: 700;
+                    
+                    p {
+                        color: #3498db;
+                        font-size: 0.85rem;
+                    }
+        
+                    .icon {
+                        transform: scale(1);
+                        display: block;
+                        margin-top: 1px;
+                    }
+                }
+            }
+        }
+    }
+    
+    &:hover {
+        border-color: rgba(52, 152, 219, 0.3);
+    }
+}

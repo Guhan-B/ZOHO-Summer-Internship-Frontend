@@ -1,0 +1,73 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border: 1px solid #e4e4e4;
+    padding: 1rem;
+    transition: 0.2s all ease-in-out;
+    cursor: pointer;
+    border-radius: 3px;
+
+    h3 {
+        margin-bottom: 1rem;
+    }
+
+    .sport_description {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-align: justify;
+        margin-bottom: 1rem;
+    }
+
+    .sport_deadline {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #3498db;
+    }
+
+    div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        .sport_name {
+            color: #3498db;
+            background-color: rgba(52, 152, 219, 0.2);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .sport_info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            span {
+                display: flex;
+                align-items: center;
+                gap: 0.1rem;
+                color: #3498db;
+                font-weight: 700;
+                
+                p {
+                    color: #3498db;
+                    font-size: 0.85rem;
+                }
+    
+                .icon {
+                    transform: scale(1);
+                    display: block;
+                    margin-top: 1px;
+                }
+            }
+        }
+    }
+
+    &:hover {
+        border-color: rgba(52, 152, 219, 0.3);
+    }
+}

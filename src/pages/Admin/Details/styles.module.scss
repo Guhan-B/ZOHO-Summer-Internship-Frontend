@@ -1,0 +1,144 @@
+.wrapper {
+    padding: 2rem;
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+
+            button {
+                border: none;
+                outline: none;
+                padding: 0.5rem 1rem;
+                border-radius: 3px;
+                width: 80px;
+                color: #ecf0f1;
+                font-weight: 700;
+                cursor: pointer;
+                
+                &:nth-of-type(1) {
+                    background-color: #3498db;
+                }
+
+                &:nth-of-type(2) {
+                    background-color: #e74c3c;
+                }
+            }
+        }
+    }
+
+    .info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+
+        .sport {
+            color: #3498db;
+            background-color: rgba(52, 152, 219, 0.2);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .size_date {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+
+            span {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #3498db;
+                font-weight: 700;
+                
+                p {
+                    color: #3498db;
+                    font-size: 0.9rem;
+                }
+    
+                .icon {
+                    transform: scale(1.25);
+                    display: block;
+                }
+            }
+        }
+    }
+
+    .description {
+        margin-bottom: 2rem;
+
+        label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #7f8c8d;
+            text-align: justify;
+        }
+    }
+
+    .participants {
+        label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.25rem;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            font-size: 0.9rem;
+            color: #2c3e50;
+
+            thead {
+                color: #3498db;
+                background-color: rgba(52, 152, 219, 0.1);
+
+                tr {
+                    th {
+                        text-align: left;
+                        padding: 0.5rem 1rem; 
+                    }
+                }
+            }
+
+            tbody{
+                tr {
+                    border-bottom: 1px solid #eeeeee;
+
+                    &:hover {
+                        background-color: #fafafa;
+                    }
+
+                    td {
+                        padding: 0.5rem 1rem; 
+
+                        ul {
+                            list-style: none;
+                             li {
+                                line-height: 1.8;
+                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
