@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdPermIdentity, MdOutlineEventNote } from "react-icons/md"
+import Button from '../Button';
 
 import styles from "./styles.module.scss";
 

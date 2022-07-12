@@ -7,15 +7,15 @@ import styles from "./styles.module.scss";
 
 const Apply = () => {
     const params = useParams();
-    
-    const [size, setSize] = React.useState(5);
+
     const [data, setData] = React.useState({
         teamName: "",
-        emails: React.useState(Array.apply(null, Array(size)).map(() => "")),
+        emails: Array.apply(null, Array(3)).map(() => ""),
     });
+
     const [error, setError] = React.useState({
         teamName: false,
-        emails: Array.apply(null, Array(size)).map(() => false)
+        emails: Array.apply(null, Array(3)).map(() => false)
     });
 
     const teamNameChange = (value) => {
@@ -42,6 +42,10 @@ const Apply = () => {
                 <InputField
                     type="text"
                     label="Team Name"
+                    value={data.teamName}
+                    error={error.teamName}
+                    onChange={teamNameChange}
+                    required
                 />
                 {
                     data.emails.map((_, idx) => {

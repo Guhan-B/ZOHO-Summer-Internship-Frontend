@@ -53,7 +53,7 @@ const Login = () => {
                         error={error.password}
                         value={data.password}
                     />
-                    <Button variant="primary" label="Login" type="reset"/>
+                    <Button variant="primary" label="Login" type="submit"/>
                 </form>
                 <footer>
                     <p>New to Lorem ipsum? <Link to={"/authentication/register"}>Register Here</Link></p>
