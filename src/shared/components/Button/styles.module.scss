@@ -9,14 +9,34 @@
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    transition: 0.2s all ease-in-out;
+
+    &.small {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem;
+    }
+
+    &:hover {
+        background-color: #bdc3c7;
+    }
 
     &.primary {
         color: #ecf0f1;
         background-color: #3498db;
+
+        &:hover {
+            background-color: #2980b9;
+        }
     }
 
     &.danger {
         color: #ecf0f1;
         background-color: #e74c3c;
+
+        &:hover {
+            background-color: #c0392b;
+        }
     }
 }

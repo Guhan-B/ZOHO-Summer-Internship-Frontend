@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import styles from "./styles.module.scss";
 
 const InputField = (props) => {
-    if(props.type === "text")
-        return <Text {...props}/>
+    if(props.type === "text" || props.type === "date" || props.type === "time")
+        return <Input {...props}/>
     
     if(props.type === "password")
         return <Password {...props}/>
@@ -14,21 +14,18 @@ const InputField = (props) => {
     
     if(props.type === "textarea")
         return <TextArea {...props}/>
-    
-    if(props.type === "date")
-        return <Date {...props}/>
-    
-    if(props.type === "time")
-        return <Time {...props}/>
 }
 
-const Text = (props) => {
+const Input = (props) => {
     const [isFocus, setIsFocus] = React.useState(false);
 
     const classes = [styles.wrapper];
 
     if(isFocus)
         classes.push(styles.focus);
+    
+    if(props.error)
+        classes.push(styles.error);
 
     return (
         <div className={classes.join(" ")}>
@@ -39,12 +36,14 @@ const Text = (props) => {
 
             <div>
                 <input 
-                    type="text" 
+                    type={props.type}
                     id={props.id} 
                     onFocus={() => setIsFocus(true)} 
                     onBlur={() => setIsFocus(false)} 
                     placeholder={props.placeholder}
                     disabled={props.disabled}
+                    onChange={(e) => props.onChange(e.target.value)}
+                    value={props.value}
                 />
                 { props.icon && <props.icon className={styles.icon}/> }
             </div>
@@ -61,6 +60,9 @@ const Password = (props) => {
 
     if(isFocus)
         classes.push(styles.focus);
+    
+    if(props.error)
+        classes.push(styles.error);
     
     if(showPassword)
         checkboxClasses.push(styles.filled);
@@ -80,6 +82,8 @@ const Password = (props) => {
                     onBlur={() => setIsFocus(false)}
                     placeholder={props.placeholder}
                     disabled={props.disabled}
+                    onChange={(e) => props.onChange(e.target.value)}
+                    value={props.value}
                 />
                 <props.icon className={styles.icon}/>
             </div>
@@ -97,19 +101,17 @@ const Password = (props) => {
 
 const Select = (props) => {
     const [isFocus, setIsFocus] = React.useState(false);
-    const [value, setValue] = React.useState({label: "", value: ""})
 
-    const classes = [styles.wrapper];
+    const classes = [styles.wrapper, styles.select];
 
     if(isFocus)
         classes.push(styles.focus);
+    
+    if(props.error)
+        classes.push(styles.error);
 
     const clickHandler = () => {
         setIsFocus(!isFocus);
-    }
-
-    const selectHandler = (value) => {
-        setValue(value);
     }
 
     return (
@@ -119,13 +121,13 @@ const Select = (props) => {
                 <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 
             }
             <div>
-                <input type="text" id={props.id} value={value.label} placeholder={props.placeholder} disabled/>
+                <input type="text" id={props.id} value={props.value.label} placeholder={props.placeholder} disabled/>
                 {
                     isFocus &&
                     <ul className={styles.options}>
                         { 
                             props.options.map(
-                                (option, idx) => <li onClick={() => selectHandler(option)} key={idx}>{option.label}</li>
+                                (option, idx) => <li onClick={() => props.onChange(option)} key={idx}>{option.label}</li>
                             ) 
                         }
                     </ul>
@@ -138,12 +140,19 @@ const Select = (props) => {
 
 const TextArea = (props) => {
     const [isFocus, setIsFocus] = React.useState(false);
-    const [count, setCount] = React.useState(0);
 
     const classes = [styles.wrapper];
 
     if(isFocus)
         classes.push(styles.focus);
+
+    if(props.error)
+        classes.push(styles.error);
+    
+    const onChange = (e) => {
+        if(e.target.value.length <= props.limit)
+            props.onChange(e.target.value)
+    }
 
     return (
         <div className={classes.join(" ")}>
@@ -152,7 +161,7 @@ const TextArea = (props) => {
                 <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 
             }
 
-            <span className={styles.character_count}>{count} / {props.limit}</span>
+            <span className={styles.character_count}>{props.value.length} / {props.limit}</span>
 
             <div>
                 <textarea 
@@ -162,68 +171,10 @@ const TextArea = (props) => {
                     placeholder={props.placeholder}
                     disabled={props.disabled}
                     rows={props.height}
+                    onChange={onChange}
+                    value={props.value}
                 >  
                 </textarea>
-                { props.icon && <props.icon className={styles.icon}/> }
-            </div>
-        </div>
-    )
-}
-
-const Date = (props) => {
-    const [isFocus, setIsFocus] = React.useState(false);
-
-    const classes = [styles.wrapper];
-
-    if(isFocus)
-        classes.push(styles.focus);
-
-    return (
-        <div className={classes.join(" ")}>
-            { 
-                props.label && 
-                <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 
-            }
-
-            <div>
-                <input 
-                    type="date" 
-                    id={props.id} 
-                    onFocus={() => setIsFocus(true)} 
-                    onBlur={() => setIsFocus(false)} 
-                    placeholder={props.placeholder}
-                    disabled={props.disabled}
-                />
-                { props.icon && <props.icon className={styles.icon}/> }
-            </div>
-        </div>
-    )
-}
-
-const Time = (props) => {
-    const [isFocus, setIsFocus] = React.useState(false);
-
-    const classes = [styles.wrapper];
-
-    if(isFocus)
-        classes.push(styles.focus);
-
-    return (
-        <div className={classes.join(" ")}>
-            { 
-                props.label && 
-                <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 
-            }
-
-            <div>
-                <input 
-                    type="time" 
-                    id={props.id} 
-                    onFocus={() => setIsFocus(true)} 
-                    onBlur={() => setIsFocus(false)} 
-                    placeholder={props.placeholder}
-                    disabled={props.disabled}
-                />
                 { props.icon && <props.icon className={styles.icon}/> }
             </div>
         </div>

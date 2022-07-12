@@ -1,16 +1,51 @@
 import React from 'react';
 import { MdOutlinePermIdentity, MdOutlineEventNote } from "react-icons/md";
+import { useNavigate } from 'react-router-dom';
+
+import Button from '../../../shared/components/Button';
+import Modal from "../../../shared/components/Modal";
 
 import styles from "./styles.module.scss";
 
 const Details = () => {
+    const navigate = useNavigate();
+
+    const [showModal, setShowModal] = React.useState(false);
+
+    const editHandler = () => {
+        navigate("edit");
+    }
+
+    const cancelHandler = () => {
+        setShowModal(true);
+    }
+
+    const positiveHandler = () => {
+        setShowModal(false)
+    }
+
+    const negativeHandler = () => {
+        setShowModal(false)
+    }
+
     return (
         <div className={styles.wrapper}>
+            {  
+                showModal &&
+                <Modal
+                    title="Do you want to proceed?"
+                    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nec commodo est."
+                    positiveLabel="Continue"
+                    negativeLabel="Cancel"
+                    positiveOnClick={positiveHandler}
+                    negativeOnClick={negativeHandler}
+                />
+            }
             <header>
                 <h1>Tournament Name</h1>
                 <div className={styles.actions}>
-                    <button>Edit</button>
-                    <button>Delete</button>
+                    <Button label="Edit Details" size="small" variant="primary" onClick={editHandler}/>
+                    <Button label="Cancel Tournament" size="small" variant="danger" onClick={cancelHandler}/>
                 </div>
             </header>
             <div className={styles.info}>

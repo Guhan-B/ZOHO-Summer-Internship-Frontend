@@ -7,28 +7,59 @@ import styles from "./styles.module.scss";
 
 const Apply = () => {
     const params = useParams();
+    
+    const [size, setSize] = React.useState(5);
+    const [data, setData] = React.useState({
+        teamName: "",
+        emails: React.useState(Array.apply(null, Array(size)).map(() => "")),
+    });
+    const [error, setError] = React.useState({
+        teamName: false,
+        emails: Array.apply(null, Array(size)).map(() => false)
+    });
+
+    const teamNameChange = (value) => {
+        setData({...data, teamName: value});
+    }
+
+    const emailChange = (value, idx) => {
+        const emailsCopy = [...data.emails];
+        emailsCopy[idx] = value;
+        setData({...data, emails: emailsCopy});
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        console.log(data);
+    }
 
     return (
         <div className={styles.wrapper}>
             <header>
                 <h4>Register for Tournament Name</h4>
             </header>
-            <form>
-                <div className={styles.form_group}>
-                    <h3>Team Leader Details</h3>
-                    <InputField type="text" label="Name" required/>
-                    <InputField type="text" label="Email" required/>
-                    <InputField type="text" label="Mobile Number" required/>
-                </div>
-                <div className={styles.form_group}>
-                    <h3>Team Members</h3>
-                    <InputField type="text" label="Member 1 Email" required/>
-                    <InputField type="text" label="Member 2 Email" required/>
-                    <InputField type="text" label="Member 3 Email" required/>
-                    <InputField type="text" label="Member 4 Email" required/>
-                </div>
+            <form onSubmit={onSubmit}>
+                <InputField
+                    type="text"
+                    label="Team Name"
+                />
+                {
+                    data.emails.map((_, idx) => {
+                        return (
+                            <InputField 
+                                key={idx}
+                                type="text" 
+                                label={idx === 0? "Team Leader Email" : `Member ${idx} Email`}
+                                onChange={(value) => emailChange(value, idx)}
+                                value={data.emails[idx]}
+                                error={error.emails[idx]}
+                                required
+                            />
+                        );
+                    })
+                }
                 <div className={styles.form_controls}>
-                    <Button variant="primary" label="Submit"/>
+                    <Button variant="primary" label="Submit" type="submit"/>
                 </div>
             </form>
         </div>

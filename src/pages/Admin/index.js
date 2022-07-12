@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout } from "react-icons/md";
+import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached } from "react-icons/md";
 
 import styles from "./styles.module.scss";
 
@@ -23,6 +23,10 @@ const Admin = (props) => {
                     <NavLink to="create" className={activeClass}>
                         <MdOutlineAvTimer className={styles.icon}/>
                         <p>Create Tournament</p>                        
+                    </NavLink>
+                    <NavLink to="/authentication/reset-password" className={activeClass}>                        
+                        <MdCached className={styles.icon}/>
+                        <p>Reset Password</p>                        
                     </NavLink>
                     <span className={styles.link} onClick={() => navigate("/authentication/login")}>                        
                         <MdLogout className={styles.icon}/>

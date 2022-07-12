@@ -11,3 +11,11 @@ root.render(
     <Router/>
   </React.StrictMode>
 );
+
+/*
+    TODO:
+    1. Add passoword reset page
+    2. Field for changing team status in administrator dashboard
+    3. Unenroll from tournament in participant dashboard
+    4. Responsiveness
+*/

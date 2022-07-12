@@ -5,6 +5,13 @@
     width: 100%;
     position: relative;
 
+    &.select {
+        input:disabled {
+            color: #2c3e50;
+            cursor: pointer;
+        }
+    }
+
     label {
         font-size: 0.9rem;
         font-weight: 500;
@@ -75,7 +82,7 @@
 
         .icon {
             color: #7f8c8d;
-            transform: scale(1.1);
+            transform: scale(1.25);
             transition: 0.2s all ease-in-out;
             padding-right: 1rem;
         }
@@ -87,6 +94,11 @@
             outline: none;
             background-color: transparent;
             font-size: 1rem;
+
+            &:disabled {
+                color: #7f8c8d;
+                cursor: not-allowed;
+            }
         }
 
         .options {
@@ -138,6 +150,20 @@
 
             .icon {
                 color: #3498db;
+            }
+        }
+    }
+
+    &.error {
+        label {
+            color: #e74c3c;
+        }
+
+        div {
+            border-color: #e74c3c;
+
+            .icon {
+                color: #e74c3c;
             }
         }
     }

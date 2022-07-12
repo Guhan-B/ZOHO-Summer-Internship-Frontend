@@ -1,12 +1,14 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import InputField from '../../../shared/components/InputField';
 import Button from "../../../shared/components/Button";
 
 import styles from "./styles.module.scss";
 
-const Create = () => {
-    
+const Edit = () => {
+    const params = useParams();
+
     const [data, setData] = React.useState({
         name: "",
         sport: "",
@@ -69,7 +71,7 @@ const Create = () => {
     return (
         <div className={styles.wrapper}>
             <header>
-                <h4>Create a New Tournament</h4>
+                <h4>Edit Tournament : Tournament Name</h4>
             </header>
             <main>
                 <form onSubmit={onSubmit}>
@@ -155,7 +157,7 @@ const Create = () => {
                     </div>
 
                     <div className={styles.form_controls}>
-                        <Button label="Create" variant="primary"/>
+                        <Button label="Save" variant="primary" type="submit"/>
                     </div>
                 </form>
             </main>
@@ -163,4 +165,4 @@ const Create = () => {
     );
 }
 
-export default Create;
+export default Edit;
