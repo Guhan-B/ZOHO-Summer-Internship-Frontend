@@ -24,9 +24,7 @@ const Create = () => {
         desctiption: false,
         size: false,
         eventDate: false,
-        eventTime: false,
         deadlineDate: false,
-        deadlineTime: false
     });
 
     const nameChange = (value) => {
@@ -49,16 +47,8 @@ const Create = () => {
         setData({...data, eventDate: value});
     }
     
-    const eventTimeChange = (value) => {
-        setData({...data, eventTime: value});
-    }
-
     const deadlineDateChange = (value) => {
         setData({...data, deadlineDate: value});
-    }
-
-    const deadlineTimeChange = (value) => {
-        setData({...data, deadlineTime: value});
     }
 
     const onSubmit = (e) => {
@@ -111,48 +101,24 @@ const Create = () => {
                         onChange={sizeChange} 
                         required
                     />
-
-                    <div className={styles.col_2}>
-                        <InputField 
-                            type="date" 
-                            label="Event Date" 
-                            id="event-date" 
-                            value={data.eventDate}
-                            error={error.eventDate}
-                            onChange={eventDateChange} 
-                            required
-                        />
-                        <InputField 
-                            type="time" 
-                            label="Event Time" 
-                            id="event-time" 
-                            value={data.eventTime}
-                            error={error.eventTime}
-                            onChange={eventTimeChange} 
-                            required
-                        />
-                    </div>
-                    
-                    <div className={styles.col_2}>
-                        <InputField 
-                            type="date" 
-                            label="Deadline Date" 
-                            id="deadline-date" 
-                            value={data.deadlineDate}
-                            error={error.deadlineDate}
-                            onChange={deadlineDateChange} 
-                            required
-                        />
-                        <InputField 
-                            type="time" 
-                            label="Deadline Time" 
-                            id="deadline-time"
-                            value={data.deadlineTime}
-                            error={error.deadlineTime}
-                            onChange={deadlineTimeChange}  
-                            required
-                        />
-                    </div>
+                    <InputField 
+                        type="datetime-local" 
+                        label="Event Date" 
+                        id="event-date" 
+                        value={data.eventDate}
+                        error={error.eventDate}
+                        onChange={eventDateChange} 
+                        required
+                    />
+                    <InputField 
+                        type="datetime-local" 
+                        label="Deadline Date" 
+                        id="deadline-date" 
+                        value={data.deadlineDate}
+                        error={error.deadlineDate}
+                        onChange={deadlineDateChange} 
+                        required
+                    />
 
                     <div className={styles.form_controls}>
                         <Button label="Create" variant="primary"/>

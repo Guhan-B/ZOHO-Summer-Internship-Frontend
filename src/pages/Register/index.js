@@ -1,14 +1,20 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import validator from 'validator';
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { MdOutlineMail, MdOutlineLock, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
 
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
+import { register } from "../../store/Authentication/action";
 
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
 const Register = (props) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const bloodGroups = [
         {label: "A+", value: "A+"},
         {label: "A-", value: "A-"},
@@ -28,37 +34,43 @@ const Register = (props) => {
         password: ""
     });
 
-    const [error, setError] = React.useState({
-        name: false, 
-        mobileNumber: false, 
-        bloodGroup: false, 
-        email: false, 
-        password: false
-    });
+    const status = useSelector(state => state.authentication.status);
+    const user   = useSelector(state => state.authentication.user);
+    const loading   = useSelector(state => state.authentication.loading);
 
-    const nameChange = (value) => {
-        setData({...data, name: value});
-    }
-
-    const mobileNumberChange = (value) => {
-        setData({...data, mobileNumber: value});
-    }
-
-    const bloodGroupChange = (value) => {
-        setData({...data, bloodGroup: value});
-    }
-
-    const emailChange = (value) => {
-        setData({...data, email: value});
-    }
-
-    const passwordChange = (value) => {
-        setData({...data, password: value});
-    }
+    const Handlers = {
+        success: () => {
+            alert("Registeration successfull. Login to continue.");
+            navigate("/authentication/login");
+        },
+        error: (message) => alert(message),
+        name: (value) => setData({...data, name: value}),
+        mobileNumber: (value) => setData({...data, mobileNumber: value}),
+        bloodGroup: (value) => setData({...data, bloodGroup: value}),
+        email: (value) => setData({...data, email: value}),
+        password: (value) => setData({...data, password: value}),
+    };
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(data);
+        
+        if(data.email === "" || data.mobileNumber === "" || data.name === "" || data.password === "" || data.bloodGroup.value === "") 
+            return Handlers.error("Credientials cannont be empty");
+
+        if(validator.isMobilePhone(data.mobileNumber) === false) 
+            return Handlers.error("Mobile Number is invalid");
+            
+        if(validator.isEmail(data.email) === false) 
+            return Handlers.error("Email is invalid");
+        
+        if(data.password.length < 8) 
+            return Handlers.error("Password should be minumum 8 characters");
+        
+        dispatch(register(data, Handlers.success, Handlers.error));
+    }
+
+    if(status) {
+        return <Navigate to="/dashboard" replace/>
     }
 
     return (
@@ -74,8 +86,7 @@ const Register = (props) => {
                         placeholder="Full Name" 
                         id="name" 
                         icon={MdOutlinePermIdentity}
-                        onChange={nameChange}
-                        error={error.name}
+                        onChange={Handlers.name}
                         value={data.name}
                     />
                     <InputField 
@@ -83,8 +94,7 @@ const Register = (props) => {
                         placeholder="Mobile Number" 
                         id="mobile-number" 
                         icon={MdOutlinePhone}
-                        onChange={mobileNumberChange}
-                        error={error.mobileNumber}
+                        onChange={Handlers.mobileNumber}
                         value={data.mobileNumber}
                     />
                     <InputField 
@@ -93,8 +103,7 @@ const Register = (props) => {
                         id="blood-group" 
                         icon={MdOutlineBloodtype}
                         options={bloodGroups}  
-                        onChange={bloodGroupChange}
-                        error={error.bloodGroup}
+                        onChange={Handlers.bloodGroup}
                         value={data.bloodGroup}
                     />
                     <InputField 
@@ -102,8 +111,7 @@ const Register = (props) => {
                         placeholder="Email" 
                         id="email" 
                         icon={MdOutlineMail}
-                        onChange={emailChange}
-                        error={error.email}
+                        onChange={Handlers.email}
                         value={data.email}
                     />
                     <InputField 
@@ -111,11 +119,10 @@ const Register = (props) => {
                         placeholder="Password" 
                         id="password" 
                         icon={MdOutlineLock}
-                        onChange={passwordChange}
-                        error={error.password}
+                        onChange={Handlers.password}
                         value={data.password}
                     />
-                    <Button variant="primary" label="Register"/>
+                    <Button variant="primary" label="Register" loading={loading}/>
                 </form>
                 <footer>
                     <p>Already have an account? <Link to={"/authentication/login"}>Login Here</Link></p>

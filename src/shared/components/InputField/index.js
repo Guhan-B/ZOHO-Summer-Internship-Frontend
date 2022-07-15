@@ -3,7 +3,7 @@ import React from 'react';
 import styles from "./styles.module.scss";
 
 const InputField = (props) => {
-    if(props.type === "text" || props.type === "date" || props.type === "time")
+    if(props.type === "text" || props.type === "date" || props.type === "time" || props.type === "datetime-local")
         return <Input {...props}/>
     
     if(props.type === "password")

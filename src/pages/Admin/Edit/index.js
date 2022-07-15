@@ -92,6 +92,7 @@ const Edit = () => {
                         error={error.sport}
                         onChange={sportChange} 
                         required
+                        disabled
                     />
                     <InputField 
                         type="textarea" 
@@ -112,6 +113,7 @@ const Edit = () => {
                         error={error.size}
                         onChange={sizeChange} 
                         required
+                        disabled
                     />
 
                     <div className={styles.col_2}>

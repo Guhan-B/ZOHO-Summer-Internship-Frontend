@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import Loader from "react-spinners/PulseLoader";
 
 import styles from "./styles.module.scss";
 
@@ -15,7 +16,9 @@ const Button = (props) => {
     const buttonClasses = [styles.wrapper, variants[props.variant], sizes[props.size]]
 
     return (
-        <button type={props.type} className={buttonClasses.join(" ")} onClick={props.onClick}> {props.label} </button>
+        <button type={props.type} className={buttonClasses.join(" ")} onClick={props.onClick}> 
+            { props.loading ? <Loader size={8} color="#ecf0f1"/> : <p>{props.label} </p> }   
+        </button>
     );
 }
 
