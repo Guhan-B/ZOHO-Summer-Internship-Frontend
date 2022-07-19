@@ -5,10 +5,10 @@ import {
 } from "./type";
 
 const initialState = {
-    token: null,
     user: null,
     status: false,
     loading: false,
+    error: false
 }
 
 const reducer = (state = initialState, action) => {

@@ -1,9 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached } from "react-icons/md";
-import { useDispatch } from "react-redux";
-
-import { logout } from "../../store/Authentication/action";
 
 import styles from "./styles.module.scss";
 
@@ -11,11 +8,13 @@ const Admin = (props) => {
     const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
     
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
-    const successHandle = () => navigate("/authentication");
+    const Handlers = {
+        success: () => navigate("/authentication"),
+        error: (message) => alert(message)
+    }
 
-    const onLogout = () => dispatch(logout(successHandle));
+    const onLogout = () => {};
 
     return (
         <div className={styles.wrapper}>

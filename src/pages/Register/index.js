@@ -2,30 +2,30 @@ import React from 'react';
 import validator from 'validator';
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { MdOutlineMail, MdOutlineLock, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
 
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
-import { register } from "../../store/Authentication/action";
+import { AuthenticationContext } from "../../providers/authentication";
+import { register } from "../../shared/API";
 
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
+const bloodGroups = [
+    {label: "A+", value: "A+"},
+    {label: "A-", value: "A-"},
+    {label: "B+", value: "B+"},
+    {label: "B-", value: "B-"},
+    {label: "AB+", value: "AB+"},
+    {label: "AB-", value: "AB-"},
+    {label: "O+", value: "O+"},
+    {label: "O-", value: "O-"},
+];
+
 const Register = (props) => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const bloodGroups = [
-        {label: "A+", value: "A+"},
-        {label: "A-", value: "A-"},
-        {label: "B+", value: "B+"},
-        {label: "B-", value: "B-"},
-        {label: "AB+", value: "AB+"},
-        {label: "AB-", value: "AB-"},
-        {label: "O+", value: "O+"},
-        {label: "O-", value: "O-"},
-    ];
-
+    const [state, setState] = React.useContext(AuthenticationContext);
     const [data, setData] = React.useState({
         name: "", 
         mobileNumber: "", 
@@ -33,45 +33,112 @@ const Register = (props) => {
         email: "", 
         password: ""
     });
+    const [error, setError] = React.useState({
+        name: false, 
+        mobileNumber: false, 
+        bloodGroup: false, 
+        email: false, 
+        password: false
+    });
+    const [loading ,setLoading] = React.useState(false);
 
-    const status = useSelector(state => state.authentication.status);
-    const user   = useSelector(state => state.authentication.user);
-    const loading   = useSelector(state => state.authentication.loading);
-
-    const Handlers = {
-        success: () => {
-            alert("Registeration successfull. Login to continue.");
-            navigate("/authentication/login");
+    const FormFields = [
+        {
+            type: "text",
+            label: "Name",
+            placeholder: "Name",
+            name: "name",
+            icon: MdOutlinePermIdentity,
+            props: {}
         },
-        error: (message) => alert(message),
-        name: (value) => setData({...data, name: value}),
-        mobileNumber: (value) => setData({...data, mobileNumber: value}),
-        bloodGroup: (value) => setData({...data, bloodGroup: value}),
-        email: (value) => setData({...data, email: value}),
-        password: (value) => setData({...data, password: value}),
-    };
+        {
+            type: "text",
+            label: "Mobile Number",
+            placeholder: "Mobile Number",
+            name: "mobileNumber",
+            icon: MdOutlinePhone,
+            props: {}
+        },
+        {
+            type: "select",
+            label: "Blood Group",
+            placeholder: "Blood Group",
+            name: "bloodGroup",
+            icon: MdOutlineBloodtype,
+            props: { options: bloodGroups }
+        },
+        {
+            type: "text",
+            label: "Email",
+            placeholder: "Email",
+            name: "email",
+            icon: MdOutlineMail,
+            props: {}
+        },
+        {
+            type: "password",
+            label: "Password",
+            placeholder: "Password",
+            name: "password",
+            icon: MdOutlineLock,
+            props: {}
+        }
+    ];
+
+    const onSuccess = (message) => {
+        setLoading(false);
+        navigate("/authentication/login");
+        alert(message);
+    }
+
+    const onError = (message, returnedError) => {
+        setLoading(false);
+        const resetError = {
+            name: false, 
+            mobileNumber: false, 
+            bloodGroup: false, 
+            email: false, 
+            password: false
+        }
+        if(returnedError) setError({...resetError, ...returnedError});
+        alert(message);
+    }  
+
+    const onChange = (value, name) => {
+        const dataCopy = {...data};
+        dataCopy[name] = value;
+        setData(dataCopy);
+    }
 
     const onSubmit = (e) => {
         e.preventDefault();
-        
-        if(data.email === "" || data.mobileNumber === "" || data.name === "" || data.password === "" || data.bloodGroup.value === "") 
-            return Handlers.error("Credientials cannont be empty");
 
-        if(validator.isMobilePhone(data.mobileNumber) === false) 
-            return Handlers.error("Mobile Number is invalid");
-            
-        if(validator.isEmail(data.email) === false) 
-            return Handlers.error("Email is invalid");
-        
-        if(data.password.length < 8) 
-            return Handlers.error("Password should be minumum 8 characters");
-        
-        dispatch(register(data, Handlers.success, Handlers.error));
+        const errorCopy = {
+            name: false, 
+            mobileNumber: false, 
+            bloodGroup: false, 
+            email: false, 
+            password: false
+        };
+
+        if(data.name === "") errorCopy.name = true;
+        if(data.mobileNumber === "" || validator.isMobilePhone(data.mobileNumber) === false) errorCopy.mobileNumber = true;
+        if(data.bloodGroup.value === "") errorCopy.bloodGroup = true;
+        if(data.email === "" || validator.isEmail(data.email) === false) errorCopy.email = true;
+        if(data.password === "" || data.password.length < 8) errorCopy.password = true;
+
+        setError(errorCopy);
+
+        if(Object.values(errorCopy).includes(true))
+            alert("One or more field is invalid.");
+        else {
+            setLoading(true);
+            register(data, onSuccess, onError);
+        }
     }
 
-    if(status) {
+    if(state.status) 
         return <Navigate to="/dashboard" replace/>
-    }
 
     return (
         <div className={styles.wrapper}>
@@ -81,47 +148,21 @@ const Register = (props) => {
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id elit nibh. In vel ipsum a diam vehicula</p>
                 </header>
                 <form onSubmit={onSubmit}>
-                    <InputField 
-                        type="text" 
-                        placeholder="Full Name" 
-                        id="name" 
-                        icon={MdOutlinePermIdentity}
-                        onChange={Handlers.name}
-                        value={data.name}
-                    />
-                    <InputField 
-                        type="text" 
-                        placeholder="Mobile Number" 
-                        id="mobile-number" 
-                        icon={MdOutlinePhone}
-                        onChange={Handlers.mobileNumber}
-                        value={data.mobileNumber}
-                    />
-                    <InputField 
-                        type="select" 
-                        placeholder="Blood Group"
-                        id="blood-group" 
-                        icon={MdOutlineBloodtype}
-                        options={bloodGroups}  
-                        onChange={Handlers.bloodGroup}
-                        value={data.bloodGroup}
-                    />
-                    <InputField 
-                        type="text" 
-                        placeholder="Email" 
-                        id="email" 
-                        icon={MdOutlineMail}
-                        onChange={Handlers.email}
-                        value={data.email}
-                    />
-                    <InputField 
-                        type="password" 
-                        placeholder="Password" 
-                        id="password" 
-                        icon={MdOutlineLock}
-                        onChange={Handlers.password}
-                        value={data.password}
-                    />
+                    {
+                        FormFields.map((field, idx) => 
+                            <InputField 
+                                key={idx}
+                                id={field.label}
+                                type={field.type}
+                                placeholder={field.placeholder}
+                                icon={field.icon}
+                                value={data[field.name]}
+                                error={error[field.name]}
+                                onChange={value => onChange(value, field.name)}
+                                {...field.props}
+                            />
+                        )
+                    }
                     <Button variant="primary" label="Register" loading={loading}/>
                 </form>
                 <footer>

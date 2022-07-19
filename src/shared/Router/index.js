@@ -1,6 +1,7 @@
 import React from 'react';
+import Loader from "react-spinners/MoonLoader";
+import axios from 'axios';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 
 import Login from "../../pages/Login";
 import Register from "../../pages/Register";
@@ -14,21 +15,35 @@ import Tournaments from "../../pages/Admin/Tournaments";
 import Create from "../../pages/Admin/Create";
 import Details from "../../pages/Admin/Details";
 import Edit from "../../pages/Admin/Edit";
-import { authenticationSuccess } from "../../store/Authentication/action";
+import { AuthenticationContext } from '../../providers/authentication';
+import { fetchUser } from "../API";
 
 const Router = () => {
-    const dispatch = useDispatch();
+    const [state, setState] = React.useContext(AuthenticationContext);
+    const [loading, setLoading] = React.useState(true);
+
+    const onSuccess = (message, data) => {
+        setLoading(false);
+        const stateCopy = {...state};
+        stateCopy.user = data;
+        stateCopy.status = true;
+        setState(stateCopy);
+    }
+
+    const onError = (message) => {
+        setLoading(false);
+    }
 
     React.useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        const token = localStorage.getItem("token");
-
-        if(user && token) {
-            dispatch(authenticationSuccess(user, token, true));
-        }
+        axios.defaults.withCredentials = true;
+        fetchUser(onSuccess, onError);
     }, []);
 
     return (
+        loading?
+        <div className="page-loader" style={{height: "100vh"}}>
+            <Loader size={50} color="#3498db"/> 
+        </div> :
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Navigate to="authentication" replace />} />
@@ -59,19 +74,18 @@ const Router = () => {
 }
 
 const Dashboard = () => {
-    const user = useSelector(state => state.authentication.user);
-    const status = useSelector(state => state.authentication.status);
+    const [state, setState] = React.useContext(AuthenticationContext);
 
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if(status === false) {
+        if(state.status === false) {
             navigate("/authentication");
         }
         else {
-            if(user.role === 0)
+            if(state.user.role === 0)
                 navigate("/dashboard/participant");
-            if(user.role === 1)
+            if(state.user.role === 1)
                 navigate("/dashboard/administrator");
         }
     }, []);

@@ -2,50 +2,81 @@ import React from 'react';
 import validator from 'validator';
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
 
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
-import { login } from "../../store/Authentication/action";
+import { AuthenticationContext } from "../../providers/authentication";
+import { login } from "../../shared/API";
 
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
 const Login = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [data, setData] = React.useState({email: "", password: ""});
-    
-    const status = useSelector(state => state.authentication.status);
-    const user   = useSelector(state => state.authentication.user);
-    const loading   = useSelector(state => state.authentication.loading);
+    const [state, setState] = React.useContext(AuthenticationContext);
+    const [data, setData] = React.useState({email: "",  password: ""});
+    const [error, setError] = React.useState({email: false, password: false});
+    const [loading ,setLoading] = React.useState(false);
 
-    const Handlers = {
-        success: (role) => navigate("/dashboard"),
-        error: (message) => alert(message),
-        email: (value) => setData({...data, email: value}),
-        password: (value) => setData({...data, password: value}),
-    };
+    const FormFields = [
+        {
+            type: "text",
+            label: "Email",
+            placeholder: "Email",
+            name: "email",
+            icon: MdOutlineMail,
+            props: {}
+        },
+        {
+            type: "password",
+            label: "Password",
+            placeholder: "Password",
+            name: "password",
+            icon: MdOutlineLock,
+            props: {}
+        }
+    ];
+
+    const onSuccess = (message, user) => {
+        setLoading(false);
+        setState({ user: user, status: true });
+        navigate("/dashboard");
+    }
+
+    const onError = (message, returnedError) => {
+        setLoading(false);
+        const resetError = { email: false, password: false };
+        if(returnedError) setError({...resetError, ...returnedError});
+        alert(message);
+    }  
+
+    const onChange = (value, name) => {
+        const dataCopy = {...data};
+        dataCopy[name] = value;
+        setData(dataCopy);
+    }
 
     const onSubmit = (e) => {
         e.preventDefault();
-        
-        if(data.email === "" || data.password === "") 
-            return Handlers.error("Credientials cannont be empty");
-            
-        if(validator.isEmail(data.email) === false) 
-            return Handlers.error("Email is invalid");
-        
-        if(data.password.length < 8) 
-            return Handlers.error("Password should be minumum 8 characters");
-        
-        dispatch(login(data, Handlers.success, Handlers.error));
+
+        const errorCopy = { email: false, password: false };
+
+        if(data.email === "" || validator.isEmail(data.email) === false) errorCopy.email = true;
+        if(data.password === "" || data.password.length < 8) errorCopy.password = true;
+
+        setError(errorCopy);
+
+        if(Object.values(errorCopy).includes(true))
+            alert("One or more field is invalid");
+        else {
+            setLoading(true);
+            login(data, onSuccess, onError);
+        }
     }
 
-    if(status) {
+    if(state.status) 
         return <Navigate to="/dashboard" replace/>
-    }
 
     return (
         <div className={styles.wrapper}>
@@ -57,23 +88,22 @@ const Login = () => {
                     </p>
                 </header>
                 <form onSubmit={onSubmit}>
-                    <InputField 
-                        type="text" 
-                        placeholder="Email" 
-                        id="login-email" 
-                        icon={MdOutlineMail}
-                        onChange={Handlers.email}
-                        value={data.email}
-                    />
-                    <InputField 
-                        type="password" 
-                        placeholder="Password" 
-                        id="login-password" 
-                        icon={MdOutlineLock}
-                        onChange={Handlers.password}
-                        value={data.password}
-                    />
-                    <Button variant="primary" label="Login" type="submit" loading={loading}/>
+                    {
+                        FormFields.map((field, idx) => 
+                            <InputField 
+                                key={idx}
+                                id={field.label}
+                                type={field.type}
+                                placeholder={field.placeholder}
+                                icon={field.icon}
+                                value={data[field.name]}
+                                error={error[field.name]}
+                                onChange={value => onChange(value, field.name)}
+                                {...field.props}
+                            />
+                        )
+                    }
+                    <Button label="Login" variant="primary" type="submit" loading={loading}/>
                 </form>
                 <footer>
                     <p>New to Lorem ipsum? <Link to={"/authentication/register"}>Register Here</Link></p>

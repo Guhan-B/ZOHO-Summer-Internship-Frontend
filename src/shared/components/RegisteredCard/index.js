@@ -21,6 +21,7 @@ const AvailableCard = () => {
                     </span>
                 </div>
             </div>
+            <p>Team details will be shown here</p>
             <div className={statusClasses.join(" ")}>
                 <p>UPCOMING</p>
             </div>

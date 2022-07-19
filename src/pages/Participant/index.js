@@ -13,9 +13,12 @@ const Participant = (props) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const successHandle = () => navigate("/authentication");
+    const Handlers = {
+        success: () => navigate("/authentication"),
+        error: (message) => alert(message)
+    }
 
-    const onLogout = () => dispatch(logout(successHandle));
+    const onLogout = () => dispatch(logout(Handlers.success, Handlers.error));
 
     return (
         <div className={styles.wrapper}>

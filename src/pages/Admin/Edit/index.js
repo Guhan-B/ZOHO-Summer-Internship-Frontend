@@ -1,166 +1,171 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import InputField from '../../../shared/components/InputField';
 import Button from "../../../shared/components/Button";
+import { editTournament } from "../../../shared/API";
 
 import styles from "./styles.module.scss";
 
 const Edit = () => {
-    const params = useParams();
+    const { state } = useLocation();
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = React.useState(false);
 
     const [data, setData] = React.useState({
-        name: "",
-        sport: "",
-        desctiption: "",
-        size: "",
-        eventDate: "",
-        eventTime: "",
-        deadlineDate: "",
-        deadlineTime: ""
+        id: state.id,
+        name: state.name,
+        sport: state.sport,
+        description: state.description,
+        teamSize: state.teamSize,
+        eventDate: new Date(state.eventDate).toISOString().replace(":00.000Z", ""),
+        deadlineDate: new Date(state.deadlineDate).toISOString().replace(":00.000Z", ""),
     });
 
     const [error, setError] = React.useState({
         name: false,
         sport: false,
-        desctiption: false,
-        size: false,
+        description: false,
+        teamSize: false,
         eventDate: false,
-        eventTime: false,
-        deadlineDate: false,
-        deadlineTime: false
+        deadlineDate: false
     });
 
-    const nameChange = (value) => {
-        setData({...data, name: value});
+    const FormFields = [
+        {
+            type: "text",
+            label: "Tournament Name",
+            name: "name",
+            required: true,
+            props: {}
+        },
+        {
+            type: "text",
+            label: "Sport",
+            name: "sport",
+            required: true,
+            props: { disabled: true }
+        },
+        {
+            type: "textarea",
+            label: "Tournament Description",
+            name: "description",
+            required: true,
+            props: { height: "8", limit: 200 }
+        },
+        {
+            type: "text",
+            label: "Team Size",
+            name: "teamSize",
+            required: true,
+            props: { disabled: true }
+        },
+        {
+            type: "datetime-local",
+            label: "Event Date",
+            name: "eventDate",
+            required: true,
+            props: {}
+        },
+        {
+            type: "datetime-local",
+            label: "Deadline Date",
+            name: "deadlineDate",
+            required: true,
+            props: {}
+        },
+    ];
+
+    const onChange = (value, name) => {
+        const dataCopy = {...data};
+        dataCopy[name] = value;
+        setData(dataCopy);
     }
 
-    const sportChange = (value) => {
-        setData({...data, sport: value});
+    const onSuccess = (message, data) => {
+        setLoading(false);
+        navigate(`/dashboard/administrator/tournaments/${state.id}`);
+        alert(message);
     }
 
-    const descriptionChange = (value) => {
-        setData({...data, desctiption: value});
-    }
-
-    const sizeChange = (value) => {
-        setData({...data, size: value});
-    }
-
-    const eventDateChange = (value) => {
-        setData({...data, eventDate: value});
-    }
-    
-    const eventTimeChange = (value) => {
-        setData({...data, eventTime: value});
-    }
-
-    const deadlineDateChange = (value) => {
-        setData({...data, deadlineDate: value});
-    }
-
-    const deadlineTimeChange = (value) => {
-        setData({...data, deadlineTime: value});
+    const onError = (message, returnedError) => {
+        setLoading(false);
+        const resetError = {
+            name: false,
+            sport: false,
+            description: false,
+            teamSize: false,
+            eventDate: false,
+            deadlineDate: false
+        }
+        if(returnedError) setError({...resetError, ...returnedError});
+        alert(message);
     }
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(data);
+
+        const errorCopy = {
+            name: false,
+            sport: false,
+            description: false,
+            teamSize: false,
+            eventDate: false,
+            deadlineDate: false,
+        };
+
+        if(data.name === "") errorCopy.name = true;
+        if(data.sport === "") errorCopy.sport = true;
+        if(data.description === "") errorCopy.description = true;
+        if(data.teamSize === "") errorCopy.teamSize = true;
+        if(data.eventDate === "") errorCopy.eventDate = true;
+        if(new Date(data.eventDate) <= new Date()) errorCopy.eventDate = true;
+        if(data.deadlineDate === "") errorCopy.deadlineDate = true;
+        if(new Date(data.deadlineDate) <= new Date()) errorCopy.deadlineDate = true;
+        if(new Date(data.deadlineDate) > new Date(data.eventDate)) {
+            errorCopy.eventDate = true;
+            errorCopy.deadlineDate = true;
+        }
+
+        setError(errorCopy);
+
+        if(Object.values(errorCopy).includes(true)) {
+            alert("One or more field is invalid");
+        }
+        else {
+            setLoading(true);
+
+            data.eventDate = new Date(data.eventDate).toUTCString();
+            data.deadlineDate = new Date(data.deadlineDate).toUTCString();
+        
+            editTournament(data, onSuccess, onError);
+        }
     }
 
     return (
         <div className={styles.wrapper}>
             <header>
-                <h4>Edit Tournament : Tournament Name</h4>
+                <h4>Edit Tournament : { state.name }</h4>
             </header>
             <main>
                 <form onSubmit={onSubmit}>
-                    <InputField 
-                        type="text" 
-                        label="Tournament Name" 
-                        id="tournament-name" 
-                        value={data.name}
-                        error={error.name}
-                        onChange={nameChange}
-                        required
-                    />
-                    <InputField 
-                        type="text" 
-                        label="Sport" 
-                        id="sport"
-                        value={data.sport}
-                        error={error.sport}
-                        onChange={sportChange} 
-                        required
-                        disabled
-                    />
-                    <InputField 
-                        type="textarea" 
-                        label="Trounament Description" 
-                        id="tournament-description" 
-                        height="8" 
-                        limit={200}
-                        value={data.desctiption}
-                        error={error.desctiption}
-                        onChange={descriptionChange} 
-                        required
-                    />
-                    <InputField 
-                        type="text" 
-                        label="Team Size" 
-                        id="team-size"
-                        value={data.size}
-                        error={error.size}
-                        onChange={sizeChange} 
-                        required
-                        disabled
-                    />
-
-                    <div className={styles.col_2}>
-                        <InputField 
-                            type="date" 
-                            label="Event Date" 
-                            id="event-date" 
-                            value={data.eventDate}
-                            error={error.eventDate}
-                            onChange={eventDateChange} 
-                            required
-                        />
-                        <InputField 
-                            type="time" 
-                            label="Event Time" 
-                            id="event-time" 
-                            value={data.eventTime}
-                            error={error.eventTime}
-                            onChange={eventTimeChange} 
-                            required
-                        />
-                    </div>
-                    
-                    <div className={styles.col_2}>
-                        <InputField 
-                            type="date" 
-                            label="Deadline Date" 
-                            id="deadline-date" 
-                            value={data.deadlineDate}
-                            error={error.deadlineDate}
-                            onChange={deadlineDateChange} 
-                            required
-                        />
-                        <InputField 
-                            type="time" 
-                            label="Deadline Time" 
-                            id="deadline-time"
-                            value={data.deadlineTime}
-                            error={error.deadlineTime}
-                            onChange={deadlineTimeChange}  
-                            required
-                        />
-                    </div>
-
-                    <div className={styles.form_controls}>
-                        <Button label="Save" variant="primary" type="submit"/>
-                    </div>
+                    {
+                        FormFields.map((field, idx) => 
+                            <InputField 
+                                key={idx}
+                                id={field.label}
+                                type={field.type}
+                                label={field.label}
+                                required={field.required}
+                                value={data[field.name]}
+                                error={error[field.name]}
+                                onChange={value => onChange(value, field.name)}
+                                {...field.props}
+                            />
+                        )
+                    }
+                    <Button label="Update Details" type="submit" variant="primary" loading={loading}/>
                 </form>
             </main>
         </div>

@@ -12,11 +12,10 @@ const authenticationRequest = () => {
     }
 }
 
-export const authenticationSuccess = (user, token, status) => {
+export const authenticationSuccess = (user, status) => {
     return {
         type: AUTHENTICATION_SUCCESS,
         user: user,
-        token: token,
         status: status
     }
 }
@@ -32,27 +31,22 @@ export const register = (data, successCB, errorCB) => {
         dispatch(authenticationRequest());
 
         try {
-            const body = {
-                name: data.name,
-                mobile_number: data.mobileNumber,
-                blood_group: data.bloodGroup.value,
-                email: data.email,
-                password: data.password,
-            };
-
-            await axios.post("http://localhost:8000/authentication/register", body);
+            await axios.post("http://localhost:8000/authentication/register", data);
 
             dispatch(authenticationSuccess(null, false));
             
             return successCB();
         }
         catch(e) {
-            const error = e.response.data.error;
-
             dispatch(authenticationError());
 
-            if(error.code === "EMAIL_ALREADY_REGISTERED")
-                return errorCB("Email is already registered.");
+            const error = e?.response?.data?.error;
+        
+            if(error && error?.code === "VALIDATION_FAILED")
+                return errorCB("One or more fields is invalid.", error.errors);
+
+            if(error && error?.code === "EMAIL_ALREADY_REGISTERED")
+                return errorCB("Email is already registered.", { email: true });
             
             return errorCB("Unable to process request. Try again.");
         }
@@ -69,28 +63,25 @@ export const login = (data, successCB, errorCB) => {
                 password: data.password,
             };
             const response = await axios.post("http://localhost:8000/authentication/login", body);
-            const token = response.data.data.token;
             const user = response.data.data.user;
 
-            localStorage.setItem("user", JSON.stringify(user));
-            localStorage.setItem("token", token);
-
-            dispatch(authenticationSuccess(user, token, true));
-
-            console.log("Role from action:", user.role);
-
+            dispatch(authenticationSuccess(user, true));
+        
             return successCB(user.role);
         }
         catch(e) {
-            const error = e.response.data.error;
-
             dispatch(authenticationError());
 
-            if(error.code === "EMAIL_NOT_REGISTERED")
-                return errorCB("Email is not registered.");
+            const error = e?.response?.data?.error;
+
+            if(error && error?.code === "VALIDATION_FAILED")
+                return errorCB("One or more fields is invalid.", error.errors);
+
+            if(error && error?.code === "EMAIL_NOT_REGISTERED")
+                return errorCB("Email is not registered.", { email: true });
             
-            if(error.code === "WRONG_PASSWORD")
-                return errorCB("Password entered is incorrect.");
+            if(error && error?.code === "WRONG_PASSWORD")
+                return errorCB("Password entered is incorrect.", { password: true });
         
             return errorCB("Unable to process request. Try again.");
         }
@@ -99,11 +90,17 @@ export const login = (data, successCB, errorCB) => {
 
 export const logout = (successCB, errorCB) => {
     return async (dispatch) => {
-        dispatch(authenticationSuccess(null, null, false));
+        dispatch(authenticationRequest());
 
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        
+        try {
+            await axios.get("http://localhost:8000/authentication/logout");
+            dispatch(authenticationSuccess(null, false));        
+        }
+        catch(e) {
+            dispatch(authenticationError());
+
+            return errorCB("Unable to logout. Try again.");
+        }
         return successCB();
     }
 }
