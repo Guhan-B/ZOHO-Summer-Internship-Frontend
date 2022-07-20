@@ -8,8 +8,17 @@
     cursor: pointer;
     border-radius: 3px;
 
-    h3 {
+    .header {
         margin-bottom: 1rem;
+        display: flex;
+        border: none;
+        padding: 0;
+        align-items: center;
+        gap: 0.5rem;
+
+        .icon {
+            margin-top: 2px;
+        }
     }
 
     .sport_description {

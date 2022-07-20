@@ -1,49 +1,126 @@
 import React from 'react';
+import validator from 'validator';
+import { MdOutlineMail, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
+
 import Button from '../../../shared/components/Button';
 import InputField from '../../../shared/components/InputField';
+import { AuthenticationContext } from '../../../providers/authentication';
 
 import styles from "./styles.module.scss";
+import { editProfile } from '../../../shared/API';
+
+const bloodGroups = [
+    {label: "A+", value: "A+"},
+    {label: "A-", value: "A-"},
+    {label: "B+", value: "B+"},
+    {label: "B-", value: "B-"},
+    {label: "AB+", value: "AB+"},
+    {label: "AB-", value: "AB-"},
+    {label: "O+", value: "O+"},
+    {label: "O-", value: "O-"},
+];
 
 const EditProfile = () => {
-    const bloodGroups = [
-        {label: "A+", value: "A+"},
-        {label: "A-", value: "A-"},
-        {label: "B+", value: "B+"},
-        {label: "B-", value: "B-"},
-        {label: "AB+", value: "AB+"},
-        {label: "AB-", value: "AB-"},
-        {label: "O+", value: "O+"},
-        {label: "O-", value: "O-"},
-    ];
-
+    const [state, setState] = React.useContext(AuthenticationContext);
     const [data, setData] = React.useState({
-        name: "Guhan.B", 
-        mobileNumber: "8925649372", 
-        bloodGroup: {label: "B+", value: "B+"}, 
-        email: "bkguhan2001@gmail.com", 
+        name: state.user.name, 
+        mobileNumber: state.user.mobileNumber, 
+        bloodGroup: {label: state.user.bloodGroup, value: state.user.bloodGroup}, 
+        email: state.user.email, 
     });
-
     const [error, setError] = React.useState({
         name: false, 
         mobileNumber: false, 
         bloodGroup: false, 
-        password: false
+        email: false
     });
+    const [loading, setLoading] = React.useState(false);
 
-    const nameChange = (value) => {
-        setData({...data, name: value});
+    const FormFields = [
+        {
+            type: "text",
+            label: "Name",
+            name: "name",
+            icon: MdOutlinePermIdentity,
+            required: true,
+            props: {}
+        },
+        {
+            type: "text",
+            label: "Mobile Number",
+            name: "mobileNumber",
+            icon: MdOutlinePhone,
+            required: true,
+            props: {}
+        },
+        {
+            type: "select",
+            label: "Blood Group",
+            name: "bloodGroup",
+            icon: MdOutlineBloodtype,
+            required: true,
+            props: { options: bloodGroups }
+        },
+        {
+            type: "text",
+            label: "Email",
+            name: "email",
+            icon: MdOutlineMail,
+            required: true,
+            props: { disabled: true }
+        }
+    ];
+
+    const onSuccess = (message) => {
+        setLoading(false);
+        const stateCopy = {...state};
+        stateCopy.user.name = data.name;
+        stateCopy.user.mobile_number = data.mobileNumber;
+        stateCopy.user.blood_group = data.bloodGroup.value;
+        setState(stateCopy);
+        alert(message);
     }
 
-    const mobileNumberChange = (value) => {
-        setData({...data, mobileNumber: value});
+    const onError = (message, returnedError) => {
+        setLoading(false);
+        const resetError = {
+            name: false, 
+            mobileNumber: false, 
+            bloodGroup: false, 
+            email: false
+        }
+        if(returnedError) setError({...resetError, ...returnedError});
+        alert(message);
+    }  
+
+    const onChange = (value, name) => {
+        const dataCopy = {...data};
+        dataCopy[name] = value;
+        setData(dataCopy);
     }
 
-    const bloodGroupChange = (value) => {
-        setData({...data, bloodGroup: value});
-    }
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(data);
+
+        const errorCopy = {
+            name: false, 
+            mobileNumber: false, 
+            bloodGroup: false, 
+            email: false, 
+        };
+
+        if(data.name === "") errorCopy.name = true;
+        if(data.mobileNumber === "" || validator.isMobilePhone(data.mobileNumber) === false) errorCopy.mobileNumber = true;
+        if(data.bloodGroup.value === "") errorCopy.bloodGroup = true;
+
+        setError(errorCopy);
+
+        if(Object.values(errorCopy).includes(true))
+            alert("One or more field is invalid");
+        else {
+            setLoading(true);
+            editProfile(data, onSuccess, onError);
+        }
     }
 
     return (
@@ -52,44 +129,24 @@ const EditProfile = () => {
                 <h4>Edit Profile Details</h4>
             </header>
             <form onSubmit={onSubmit}>
-                <InputField 
-                    type="text" 
-                    label="Full Name" 
-                    id="full-name"
-                    onChange={nameChange}
-                    error={error.name}
-                    value={data.name} 
-                    required
-                />
-                <InputField 
-                    type="text" 
-                    label="Mobile Number" 
-                    id="mobile-number"
-                    onChange={mobileNumberChange}
-                    error={error.mobileNumber}
-                    value={data.mobileNumber} 
-                    required
-                />
-                <InputField 
-                    type="select" 
-                    options={bloodGroups} 
-                    label="Blood Group" 
-                    id="blood-group"
-                    onChange={bloodGroupChange}
-                    error={error.bloodGroup}
-                    value={data.bloodGroup} 
-                    required
-                />
-                <InputField 
-                    type="text" 
-                    label="Email" 
-                    id="email"
-                    value={data.email} 
-                    required 
-                    disabled
-                />
+                {
+                    FormFields.map((field, idx) => 
+                        <InputField 
+                            key={idx}
+                            id={field.label}
+                            type={field.type}
+                            label={field.label}
+                            icon={field.icon}
+                            required={field.required}
+                            value={data[field.name]}
+                            error={error[field.name]}
+                            onChange={value => onChange(value, field.name)}
+                            {...field.props}
+                        />
+                    )
+                }
                 <div className={styles.form_controls}>
-                    <Button label="Save" variant="primary"/>
+                    <Button label="Save" variant="primary" loading={loading}/>
                 </div>
             </form>
         </div>

@@ -2,11 +2,10 @@ import React from 'react';
 import Loader from "react-spinners/MoonLoader";
 
 import TournamentCard from '../../../shared/components/TournamentCard';
+import Fallback from '../../../shared/components/Fallback';
 import { fetchTournaments } from "../../../shared/API"
 
 import styles from "./styles.module.scss";
-import Fallback from '../../../shared/components/Fallback';
-
 
 const Tournaments = () => {
     const [loading, setLoading] = React.useState(true);
@@ -41,7 +40,7 @@ const Tournaments = () => {
         </div> :
         <div className={styles.wrapper}>
             <header>
-                <h4>Avaliable Tournaments</h4>
+                <h4>All Tournaments</h4>
             </header>
             <main>
                 { tournaments.map(tournament => <TournamentCard key={tournament.id} data={tournament}/>)}

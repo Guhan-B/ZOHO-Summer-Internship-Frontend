@@ -1,36 +1,90 @@
 import React from 'react';
-import { useParams } from "react-router-dom";
+import validator from 'validator';
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+
 import Button from '../../../shared/components/Button';
 import InputField from '../../../shared/components/InputField';
+import { AuthenticationContext } from '../../../providers/authentication';
+import { applyTournament } from "../../../shared/API";
 
 import styles from "./styles.module.scss";
 
 const Apply = () => {
-    const params = useParams();
+    const { state: { id , teamSize } } = useLocation();
+    const navigate = useNavigate();
+    const state = React.useContext(AuthenticationContext)[0];
 
-    const [data, setData] = React.useState({
-        teamName: "",
-        emails: Array.apply(null, Array(3)).map(() => ""),
+    const [data, setData] = React.useState({ 
+        tournamentId: id, 
+        teamName: "", 
+        emails: Array.apply(null, Array(teamSize)).map((_, idx) => idx === 0 ? state.user.email : ""),
+        names: Array.apply(null, Array(teamSize)).map((_, idx) => idx === 0 ? state.user.name : "")
     });
-
-    const [error, setError] = React.useState({
-        teamName: false,
-        emails: Array.apply(null, Array(3)).map(() => false)
+    const [error, setError] = React.useState({ 
+        teamName: false, 
+        emails: Array.apply(null, Array(teamSize)).map(() => false),
+        names: Array.apply(null, Array(teamSize)).map(() => false)
     });
+    const [loading, setLoading] = React.useState(false);
 
-    const teamNameChange = (value) => {
-        setData({...data, teamName: value});
+    const onSuccess = (message) => {
+        setLoading(false);
+        navigate("/dashboard/participant");
+        alert(message);
     }
 
-    const emailChange = (value, idx) => {
-        const emailsCopy = [...data.emails];
-        emailsCopy[idx] = value;
-        setData({...data, emails: emailsCopy});
+    const onError = (message, returnedError) => {
+        setLoading(false);
+        const resetError = {
+            teamName: false, 
+            emails: Array.apply(null, Array(teamSize)).map(() => false),
+            names: Array.apply(null, Array(teamSize)).map(() => false),
+        }
+        if(returnedError) setError({...resetError, ...returnedError});
+        alert(message);
+    }  
+
+    const onTeamNameChange = teamName => setData({...data, teamName });
+
+    const onEmailChange = (value, idx) => {
+        const emails = [...data.emails];
+        emails[idx] = value;
+        setData({...data, emails })
+    }
+
+    const onNameChange = (value, idx) => {
+        const names = [...data.names];
+        names[idx] = value;
+        setData({...data, names })
     }
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(data);
+
+        const errorCopy = { 
+            teamName: false, 
+            emails: Array.apply(null, Array(teamSize)).map(() => false),
+            names: Array.apply(null, Array(teamSize)).map(() => false),
+        };
+
+        if(data.teamName === "") errorCopy.teamName = true;
+
+        for(let i = 0; i < teamSize; i++) {
+            if(data.emails[i] === "" || validator.isEmail(data.emails[i]) === false)
+                errorCopy.emails[i] = true;
+            if(data.names[i] === "")
+                errorCopy.names[i] = true;
+        }
+        
+        setError(errorCopy);
+
+        if(errorCopy.teamName || errorCopy.emails.includes(true)) {
+            alert("One or More form field is invalid");
+        }
+        else {
+            setLoading(true);
+            applyTournament(data, onSuccess, onError);
+        }
     }
 
     return (
@@ -40,31 +94,44 @@ const Apply = () => {
             </header>
             <form onSubmit={onSubmit}>
                 <InputField
+                    id="Team Name"
                     type="text"
                     label="Team Name"
                     value={data.teamName}
                     error={error.teamName}
-                    onChange={teamNameChange}
+                    onChange={onTeamNameChange}
                     required
                 />
                 {
-                    data.emails.map((_, idx) => {
+                    [...Array(teamSize).keys()].map(idx => {
                         return (
-                            <InputField 
-                                key={idx}
-                                type="text" 
-                                label={idx === 0? "Team Leader Email" : `Member ${idx} Email`}
-                                onChange={(value) => emailChange(value, idx)}
-                                value={data.emails[idx]}
-                                error={error.emails[idx]}
-                                required
-                            />
+                            <div key={idx} className={styles.form_group}>
+                                <label>{idx === 0? "Team Leader Details" : `Member ${idx} Details`}</label>
+                                <InputField 
+                                    id={idx}
+                                    type="text" 
+                                    label="Name"
+                                    onChange={value => onNameChange(value, idx)}
+                                    value={data.names[idx]}
+                                    error={error.names[idx]}
+                                    disabled={idx === 0? true : false}
+                                    required
+                                />
+                                <InputField 
+                                    id={idx}
+                                    type="text" 
+                                    label="Email"
+                                    onChange={value => onEmailChange(value, idx)}
+                                    value={data.emails[idx]}
+                                    error={error.emails[idx]}
+                                    disabled={idx === 0? true : false}
+                                    required
+                                />
+                            </div>
                         );
                     })
                 }
-                <div className={styles.form_controls}>
-                    <Button variant="primary" label="Submit" type="submit"/>
-                </div>
+                <Button variant="primary" label="Apply Tournamnet" type="submit" loading={loading}/>
             </form>
         </div>
     );

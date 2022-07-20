@@ -15,6 +15,7 @@ import Tournaments from "../../pages/Admin/Tournaments";
 import Create from "../../pages/Admin/Create";
 import Details from "../../pages/Admin/Details";
 import Edit from "../../pages/Admin/Edit";
+import ResetPassword from '../../pages/ResetPassword';
 import { AuthenticationContext } from '../../providers/authentication';
 import { fetchUser } from "../API";
 
@@ -51,6 +52,7 @@ const Router = () => {
                     <Route index element={<Navigate to="login" replace />} />
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
+                    <Route path="reset-password" element={<ResetPassword />} />
                 </Route>
                 <Route path="dashboard" element={<Dashboard/>}>
                         <Route path="participant" element={<Participant />}>

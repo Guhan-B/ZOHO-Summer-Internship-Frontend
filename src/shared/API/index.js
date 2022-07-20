@@ -45,6 +45,41 @@ export const register = async (data, onSuccess, onError) => {
     }
 }
 
+export const reset = async (data, onSuccess, onError) => {
+    try {
+        await axios.post(`http://localhost:8000/authentication/reset-password`, data);
+        onSuccess("Password changed successfully");
+    }
+    catch(e) {
+        const error = e?.response?.data?.error;
+        
+        if(error && error?.code === "VALIDATION_FAILED")
+            return onError("Password entered is invalid", error.errors);
+            
+        onError("Error occured. Unable to edit profile") 
+    }
+}
+
+export const logout = async (onSuccess, onError) => {
+    try {
+        await axios.get("http://localhost:8000/authentication/logout");
+        onSuccess("Logout successfull");
+    }
+    catch(e) {
+        onError("Unable to logout. Try again");
+    }
+}
+
+export const fetchUser = async (onSuccess, onError) => {
+    try {
+        const response  = await axios.get("http://localhost:8000/authentication/user");
+        onSuccess("User loaded successfully", response.data.data.user);
+    }
+    catch(e) {
+        onError("Unable to load user");
+    }
+}
+
 export const createTournament = async (data, onSuccess, onError) => {
     try {
         const response = await axios.post("http://localhost:8000/administrator/tournaments/create", data);
@@ -64,6 +99,7 @@ export const createTournament = async (data, onSuccess, onError) => {
 export const fetchTournament = async (id, onSuccess, onError) => {
     try {
         const response = await axios.get(`http://localhost:8000/administrator/tournaments/${id}`);
+        console.log(response.data.data.tournament);
         return onSuccess("Trounament loaded successfully", response.data.data.tournament);
     }
     catch(e) {
@@ -91,9 +127,9 @@ export const editTournament = async (data, onSuccess, onError) => {
         const error = e?.response?.data?.error;
         
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid.", error.errors);
+            return onError("One or more fields is invalid", error.errors);
             
-        onError("Error occured. Unable to edit tournament.")
+        onError("Error occured. Unable to edit tournament")
     }
 }
 
@@ -107,12 +143,55 @@ export const fetchTournaments = async (onSuccess, onError) => {
     }
 }
 
-export const fetchUser = async (onSuccess, onError) => {
+export const fetchAvaliableTournaments = async (onSuccess, onError) => {
     try {
-        const response  = await axios.get("http://localhost:8000/authentication/user");
-        onSuccess("User loaded successfully", response.data.data.user);
+        const response = await axios.post(`http://localhost:8000/participant/available/`, { today: new Date().toGMTString() });
+        return onSuccess("Avaliable trounaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
-        onError("Unable to load user");
+        onError("Unable to load avaliable tournaments");
+    }
+}
+
+export const fetchRegisteredTournaments = async (onSuccess, onError) => {
+    try {
+        const response = await axios.get("http://localhost:8000/participant/registered");
+        onSuccess("Registered tournaments loaded successfully", response.data.data.tournaments);
+    }
+    catch(e) {
+        onError("Unable to load registered tournaments");
+    }
+}
+
+export const editProfile = async (data, onSuccess, onError) => {
+    try {
+        await axios.post(`http://localhost:8000/participant/profile`, {...data, bloodGroup: data.bloodGroup.value});
+        onSuccess("Profile has been updated successfully");
+    }
+    catch(e) {
+        const error = e?.response?.data?.error;
+        
+        if(error && error?.code === "VALIDATION_FAILED")
+            return onError("One or more fields is invalid", error.errors);
+            
+        onError("Error occured. Unable to edit profile");
+    }
+}
+
+export const applyTournament = async (data, onSuccess, onError) => {
+    try {
+        await axios.post("http://localhost:8000/participant/apply", data);
+        onSuccess("Tournament applied successfully");
+    }
+    catch(e) {
+        const error = e?.response?.data?.error;
+        
+        if(error && error?.code === "VALIDATION_FAILED")
+            return onError("One or more fields is invalid");
+
+        if(error && error?.code === "EMAILS_ALREADY_REGISTERED")
+            return onError("One or more emails already registered", error.errors);
+
+        onError("Error occured. Unable to apply to tournament", error.errors);
     }
 }

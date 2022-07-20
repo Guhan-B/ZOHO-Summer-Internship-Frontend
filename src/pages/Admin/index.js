@@ -1,20 +1,26 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached } from "react-icons/md";
+import { AuthenticationContext } from '../../providers/authentication';
+import { logout } from "../../shared/API";
 
 import styles from "./styles.module.scss";
 
 const Admin = (props) => {
-    const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
-    
     const navigate = useNavigate();
-
-    const Handlers = {
-        success: () => navigate("/authentication"),
-        error: (message) => alert(message)
-    }
-
-    const onLogout = () => {};
+    const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
+    const [state, setState] = React.useContext(AuthenticationContext);
+    
+    const onLogout = () => {
+        logout(
+            (message) => {
+                setState({ user: null, status: false });
+                navigate("/");
+                alert(message);
+            },
+            (message) => alert(message)
+        );
+    };
 
     return (
         <div className={styles.wrapper}>
