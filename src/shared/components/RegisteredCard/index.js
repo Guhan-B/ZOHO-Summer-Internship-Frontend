@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdOutlineEventNote, MdStars } from "react-icons/md"
+import Modal from '../Modal';
 
 import styles from "./styles.module.scss";
 
@@ -13,12 +14,12 @@ const config = {
 
 const RegisteredCard = (props) => {
     const result = [
-        { label: "UPCOMMING", class:  styles.upcoming},
-        { label: "NOT PARTICIPATED", class:  styles.not_participated},
-        { label: "DISQUALIFIED", class:  styles.disqualified},
-        { label: "LOST", class:  styles.lost},
-        { label: "WINNER", class:  styles.winner},
-        { label: "CANCELLED", class:  styles.disqualified},
+        { label: "PENDING", class:  styles.pending },
+        { label: "NOT PARTICIPATED", class:  styles.not_participated },
+        { label: "DISQUALIFIED", class:  styles.disqualified },
+        { label: "LOST", class:  styles.lost },
+        { label: "WINNER", class:  styles.winner },
+        { label: "CANCELLED", class:  styles.disqualified },
     ];
     const resultClasses = [styles.sport_result, result[props.data.team.result].class];
     const eventDate = new Date(props.data.event_date);
@@ -34,9 +35,15 @@ const RegisteredCard = (props) => {
         <React.Fragment>
             {
                 show &&
-                <React.Fragment>
-                    <div className={styles.backdrop}></div>
-                    <div className={styles.modal}>
+                <Modal
+                    positive={props.user.id === props.data.team.leader_id && new Date(props.data.deadline_date) >= new Date()}
+                    negative={true}
+                    positiveLabel="Withdraw"
+                    negativeLabel="Close"
+                    onPositiveAction={onWithdraw}
+                    onNegativeAction={onClose}
+                >
+                    <div className={styles.modal_contents}>
                         <section>
                             <label>Team Name</label>
                             <p>{props.data.team.name}</p>
@@ -50,22 +57,14 @@ const RegisteredCard = (props) => {
                                         <li key={member.id}>
                                             <p>{ member.name }</p>
                                             <span>{ member.email }</span>
-                                            { member.id === props.data.team.leader_id && <MdStars size={18} color="#f1c40f"/> }
+                                            { member.id === props.data.team.leader_id && <MdStars style={{marginTop: "2px"}} size={18} color="#f1c40f"/> }
                                         </li> 
                                     )
                                 }
                             </ul>
                         </section>
-                        <footer>
-                            { 
-                                props.user.id === props.data.team.leader_id &&
-                                new Date(props.data.deadline_date) >= new Date() &&
-                                <button className={styles.negative} onClick={onWithdraw}>Withdraw</button> 
-                            }
-                            <button className={styles.positive} onClick={onClose}>Close</button>
-                        </footer>
                     </div>
-                </React.Fragment>
+                </Modal>
             }
             <div className={styles.wrapper} onClick={() => setShow(true)}>
                 <div className={styles.sport_details}>
@@ -83,7 +82,7 @@ const RegisteredCard = (props) => {
                 </div>
                 
                 <div className={resultClasses.join(" ")}>
-                    <p>UPCOMING</p>
+                    <p>{ result[props.data.team.result].label }</p>
                 </div>
             </div>
         </React.Fragment>

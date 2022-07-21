@@ -115,7 +115,7 @@ const Select = (props) => {
     }
 
     return (
-        <div className={classes.join(" ")} onClick={clickHandler}>
+        <div className={classes.join(" ")} onClick={props.disabled ? () => {} : clickHandler}>
             { 
                 props.label && 
                 <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 

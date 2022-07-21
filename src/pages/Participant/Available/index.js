@@ -1,5 +1,6 @@
 import React from 'react';
 import Loader from "react-spinners/MoonLoader";
+import { useNavigate } from "react-router-dom";
 
 import TournamentCard from '../../../shared/components/TournamentCard';
 import Fallback from '../../../shared/components/Fallback';
@@ -11,6 +12,7 @@ const Avaliable = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
     const [tournaments, setTournaments] = React.useState([]);
+    const naviagte = useNavigate();
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -27,13 +29,32 @@ const Avaliable = () => {
         fetchAvaliableTournaments(onSuccess, onError);
     }, []);
 
-    console.log("Avaliable:", tournaments);
-
-    if(loading === false && error === true)
-        return <Fallback/>;
+    if(loading === false && error === true) {
+        return (
+            <Fallback 
+                message="An error occured unable to load available tournaments. Try again later"
+                label="Try Again"
+                onClick={() => window.location.reload()}
+            />
+        );
+    }        
     
-    if(loading === false && tournaments.length === 0)
-        return <Fallback/>
+    if(loading === false && tournaments.length === 0) {
+        return (           
+            <Fallback 
+                message="There are no active tournaments available currently. Come back again later to see avaliability"
+                label="Go To Registered"
+                onClick={() => naviagte("/dashboard/participant/registered")}
+            />
+        );
+    }
+
+    const modifiedTournaments = tournaments.map(tournament => {
+        const copy = {...tournament, type: 0};
+        if(new Date(copy.event_date) < new Date()) copy.type = 1;
+        if(copy.cancelled === 1) copy.type = 2;
+        return copy;
+    });
 
     return (
         loading? 
@@ -45,7 +66,7 @@ const Avaliable = () => {
                 <h4>Avaliable Tournaments</h4>
             </header>
             <main>
-                { tournaments.map(tournament => <TournamentCard key={tournament.id} data={tournament}/>)}
+                { modifiedTournaments.map(tournament => <TournamentCard key={tournament.id} data={tournament}/>)}
             </main>
         </div>
     )

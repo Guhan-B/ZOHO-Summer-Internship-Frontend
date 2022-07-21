@@ -1,6 +1,6 @@
 import React from 'react';
 import validator from 'validator';
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom";
 
 import Button from '../../../shared/components/Button';
 import InputField from '../../../shared/components/InputField';
@@ -10,20 +10,19 @@ import { applyTournament } from "../../../shared/API";
 import styles from "./styles.module.scss";
 
 const Apply = () => {
-    const { state: { id , teamSize } } = useLocation();
+    const { state: routeState } = useLocation();
     const navigate = useNavigate();
     const state = React.useContext(AuthenticationContext)[0];
-
     const [data, setData] = React.useState({ 
-        tournamentId: id, 
+        tournamentId: routeState.id, 
         teamName: "", 
-        emails: Array.apply(null, Array(teamSize)).map((_, idx) => idx === 0 ? state.user.email : ""),
-        names: Array.apply(null, Array(teamSize)).map((_, idx) => idx === 0 ? state.user.name : "")
+        emails: Array.apply(null, Array(routeState.teamSize)).map((_, idx) => idx === 0 ? state.user.email : ""),
+        names: Array.apply(null, Array(routeState.teamSize)).map((_, idx) => idx === 0 ? state.user.name : "")
     });
     const [error, setError] = React.useState({ 
         teamName: false, 
-        emails: Array.apply(null, Array(teamSize)).map(() => false),
-        names: Array.apply(null, Array(teamSize)).map(() => false)
+        emails: Array.apply(null, Array(routeState.teamSize)).map(() => false),
+        names: Array.apply(null, Array(routeState.teamSize)).map(() => false)
     });
     const [loading, setLoading] = React.useState(false);
 
@@ -37,8 +36,8 @@ const Apply = () => {
         setLoading(false);
         const resetError = {
             teamName: false, 
-            emails: Array.apply(null, Array(teamSize)).map(() => false),
-            names: Array.apply(null, Array(teamSize)).map(() => false),
+            emails: Array.apply(null, Array(routeState.teamSize)).map(() => false),
+            names: Array.apply(null, Array(routeState.teamSize)).map(() => false),
         }
         if(returnedError) setError({...resetError, ...returnedError});
         alert(message);
@@ -63,13 +62,13 @@ const Apply = () => {
 
         const errorCopy = { 
             teamName: false, 
-            emails: Array.apply(null, Array(teamSize)).map(() => false),
-            names: Array.apply(null, Array(teamSize)).map(() => false),
+            emails: Array.apply(null, Array(routeState.teamSize)).map(() => false),
+            names: Array.apply(null, Array(routeState.teamSize)).map(() => false),
         };
 
         if(data.teamName === "") errorCopy.teamName = true;
 
-        for(let i = 0; i < teamSize; i++) {
+        for(let i = 0; i < routeState.teamSize; i++) {
             if(data.emails[i] === "" || validator.isEmail(data.emails[i]) === false)
                 errorCopy.emails[i] = true;
             if(data.names[i] === "")
@@ -79,7 +78,7 @@ const Apply = () => {
         setError(errorCopy);
 
         if(errorCopy.teamName || errorCopy.emails.includes(true)) {
-            alert("One or More form field is invalid");
+            alert("One or more form field is invalid");
         }
         else {
             setLoading(true);
@@ -103,7 +102,7 @@ const Apply = () => {
                     required
                 />
                 {
-                    [...Array(teamSize).keys()].map(idx => {
+                    [...Array(routeState.teamSize).keys()].map(idx => {
                         return (
                             <div key={idx} className={styles.form_group}>
                                 <label>{idx === 0? "Team Leader Details" : `Member ${idx} Details`}</label>

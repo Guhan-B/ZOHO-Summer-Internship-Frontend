@@ -8,20 +8,13 @@ export const login = async (data, onSuccess, onError) => {
         };
 
         const response = await axios.post("http://localhost:8000/authentication/login", body);
-
         onSuccess("Login successfull", response.data.data.user);
     }
     catch(e) {
         const error = e?.response?.data?.error;
 
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid", error.errors);
-
-        if(error && error?.code === "EMAIL_NOT_REGISTERED")
-            return onError("Email is not registered", { email: true });
-        
-        if(error && error?.code === "WRONG_PASSWORD")
-            return onError("Password entered is incorrect", { password: true });
+            return onError(error.message, error.errors);
     
         return onError("Unable to process request. Try again");
     }
@@ -36,10 +29,7 @@ export const register = async (data, onSuccess, onError) => {
         const error = e?.response?.data?.error;
     
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid", error.errors);
-
-        if(error && error?.code === "EMAIL_ALREADY_REGISTERED")
-            return onError("Email is already registered", { email: true });
+            return onError(error.message, error.errors);
         
         return onError("Unable to process request. Try again");
     }
@@ -54,9 +44,9 @@ export const reset = async (data, onSuccess, onError) => {
         const error = e?.response?.data?.error;
         
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("Password entered is invalid", error.errors);
+            return onError(error.message, error.errors);
             
-        onError("Error occured. Unable to edit profile") 
+        onError("Unable to process request. Try again") 
     }
 }
 
@@ -66,7 +56,7 @@ export const logout = async (onSuccess, onError) => {
         onSuccess("Logout successfull");
     }
     catch(e) {
-        onError("Unable to logout. Try again");
+        onError("Unable to process request. Try again");
     }
 }
 
@@ -76,34 +66,32 @@ export const fetchUser = async (onSuccess, onError) => {
         onSuccess("User loaded successfully", response.data.data.user);
     }
     catch(e) {
-        onError("Unable to load user");
+        onError("Unable to process request. Try again");
     }
 }
 
 export const createTournament = async (data, onSuccess, onError) => {
     try {
         const response = await axios.post("http://localhost:8000/administrator/tournaments/create", data);
-
         onSuccess("Tournament created successfully", response.data.data.tournament);
     }
     catch(e) {
         const error = e?.response?.data?.error;
     
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid", error.errors);
+            return onError(error.message, error.errors);
             
-        onError("Error occured. Unable to create tournament");            
+        onError("Unable to process request. Try again");            
     }
 }
 
 export const fetchTournament = async (id, onSuccess, onError) => {
     try {
         const response = await axios.get(`http://localhost:8000/administrator/tournaments/${id}`);
-        console.log(response.data.data.tournament);
         return onSuccess("Trounament loaded successfully", response.data.data.tournament);
     }
     catch(e) {
-        return onError("Error occured. Unable to load tournament");
+        return onError("Unable to process request. Try again");
     }
 }
 
@@ -113,23 +101,22 @@ export const cancelTournament = async (id, onSuccess, onError) => {
         onSuccess("Tournament cancelled successfully");
     }
     catch(e) {
-        onError("Unable to cancel tournament. Try again")
+        onError("Unable to process request. Try again")
     }
 }
 
 export const editTournament = async (data, onSuccess, onError) => {
     try {
         await axios.post(`http://localhost:8000/administrator/tournaments/edit/${data.id}`, data);
-        
         onSuccess("Tournament details updated successfully");
     }
     catch(e) {
         const error = e?.response?.data?.error;
         
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid", error.errors);
+            return onError(error.message, error.errors);
             
-        onError("Error occured. Unable to edit tournament")
+        onError("Unable to process request. Try again")
     }
 }
 
@@ -139,7 +126,22 @@ export const fetchTournaments = async (onSuccess, onError) => {
         onSuccess("Trounaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
-        onError("Unable to load tournaments");
+        onError("Unable to process request. Try again")
+    }
+}
+
+export const updateResult = async (data, onSuccess, onError) => {
+    try {
+        const response = await axios.post("http://localhost:8000/administrator/team/result", data);   
+        onSuccess("Result updated successfully", data.result);
+    }
+    catch(e) {
+        const error = e?.response?.data?.error;
+        
+        if(error && error?.code === "VALIDATION_FAILED")
+            return onError(error.message, error.errors);
+            
+        onError("Unable to process request. Try again")
     }
 }
 
@@ -149,7 +151,7 @@ export const fetchAvaliableTournaments = async (onSuccess, onError) => {
         return onSuccess("Avaliable trounaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
-        onError("Unable to load avaliable tournaments");
+        onError("Unable to process request. Try again")
     }
 }
 
@@ -159,7 +161,7 @@ export const fetchRegisteredTournaments = async (onSuccess, onError) => {
         onSuccess("Registered tournaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
-        onError("Unable to load registered tournaments");
+        onError("Unable to process request. Try again")
     }
 }
 
@@ -172,9 +174,9 @@ export const editProfile = async (data, onSuccess, onError) => {
         const error = e?.response?.data?.error;
         
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid", error.errors);
+            return onError(error.message, error.errors);
             
-        onError("Error occured. Unable to edit profile");
+        onError("Unable to process request. Try again")
     }
 }
 
@@ -187,11 +189,8 @@ export const applyTournament = async (data, onSuccess, onError) => {
         const error = e?.response?.data?.error;
         
         if(error && error?.code === "VALIDATION_FAILED")
-            return onError("One or more fields is invalid");
+            return onError(error.message, error.errors);
 
-        if(error && error?.code === "EMAILS_ALREADY_REGISTERED")
-            return onError("One or more emails already registered", error.errors);
-
-        onError("Error occured. Unable to apply to tournament", error.errors);
+        onError("Unable to process request. Try again")
     }
 }

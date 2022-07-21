@@ -14,21 +14,17 @@ const config = {
 
 const AvailableCard = (props) => {
     const navigate = useNavigate();
-
     const eventDate = new Date(props.data.event_date);
     const deadlineDate = new Date(props.data.deadline_date);
     const state = {id: props.data.id, teamSize: props.data.team_size};
-
-    let type = 0;
-    if(new Date(props.data.event_date) < new Date()) type = 1;
-    if(props.data.cancelled === 1) type = 2;
+    const classes = [styles.sport_deadline, new Date() > deadlineDate ? styles.red : ""];
 
     return (
         <div className={styles.wrapper} onClick={() => navigate(`${props.data.id}`, { state })}>
             <header className={styles.header}>
                 <h3>{ props.data.name }</h3>
-                { type === 1 && <MdVerified className={styles.icon} color="#2ecc71"/> }
-                { type === 2 && <MdCancel className={styles.icon} color="#e74c3c"/> }
+                { props.data.type === 1 && <MdVerified className={styles.icon} color="#2ecc71"/> }
+                { props.data.type === 2 && <MdCancel className={styles.icon} color="#e74c3c"/> }
             </header>
             <div>
                 <span className={styles.sport_name}>{ props.data.sport }</span>
@@ -44,7 +40,7 @@ const AvailableCard = (props) => {
                 </span>
             </div>
             <p className={styles.sport_description}>{ props.data.description }</p>
-            <p className={styles.sport_deadline}>REGISTER BEFORE { deadlineDate.toLocaleString("en-US", config) }</p>
+            <p className={classes.join(" ")}>REGISTER BEFORE { deadlineDate.toLocaleString("en-US", config) }</p>
         </div>
     );
 }

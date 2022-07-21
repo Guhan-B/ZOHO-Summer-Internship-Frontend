@@ -32,6 +32,11 @@
         font-size: 0.9rem;
         font-weight: 700;
         color: #3498db;
+        margin-top: auto;
+
+        &.red {
+            color: #e74c3c;
+        }
     }
 
     div {

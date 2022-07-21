@@ -1,6 +1,6 @@
 import React from 'react';
 import Loader from "react-spinners/MoonLoader";
-
+import { useNavigate } from "react-router-dom"
 import RegisteredCard from '../../../shared/components/RegisteredCard';
 import Fallback from '../../../shared/components/Fallback';
 import { fetchRegisteredTournaments } from "../../../shared/API";
@@ -13,6 +13,7 @@ const Registered = () => {
     const [error, setError] = React.useState(false);
     const [tournaments, setTournaments] = React.useState([]);
     const state = React.useContext(AuthenticationContext)[0];
+    const navigate = useNavigate();
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -29,13 +30,25 @@ const Registered = () => {
         fetchRegisteredTournaments(onSuccess, onError);
     }, []);
 
-    console.log(state.user);
-
-    if(loading === false && error === true)
-        return <Fallback/>;
+    if(loading === false && error === true) {
+        return (
+            <Fallback 
+                message="An error occured unable to load registered tournaments. Try again later"
+                label="Try Again"
+                onClick={() => window.location.reload()}
+            />
+        );
+    }        
     
-    if(loading === false && tournaments.length === 0)
-        return <Fallback/>
+    if(loading === false && tournaments.length === 0) {
+        return (           
+            <Fallback 
+                message="You have not regisered to any tournament. Try to participate in some trounament by registering!"
+                label="Go To Available"
+                onClick={() => navigate("/dashboard/participant/avaliable")}
+            />
+        );
+    }
         
     return (
         loading? 
