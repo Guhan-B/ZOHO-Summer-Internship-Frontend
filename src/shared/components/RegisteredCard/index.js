@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdOutlineEventNote, MdStars } from "react-icons/md"
+
 import Modal from '../Modal';
+import { withdraw } from "../../API";
 
 import styles from "./styles.module.scss";
 
@@ -19,17 +22,21 @@ const RegisteredCard = (props) => {
         { label: "DISQUALIFIED", class:  styles.disqualified },
         { label: "LOST", class:  styles.lost },
         { label: "WINNER", class:  styles.winner },
-        { label: "CANCELLED", class:  styles.disqualified },
+        { label: "CANCELLED", class:  styles.cancelled },
     ];
     const resultClasses = [styles.sport_result, result[props.data.team.result].class];
     const eventDate = new Date(props.data.event_date);
     const [show, setShow] = React.useState(false);
+    const navigate = useNavigate()
 
     const onClose = () => setShow(false);
-    const onWithdraw = () => {}
-
-    if(props.data.cancelled === 1)
-        resultClasses[0] = result[5].class;
+    const onWithdraw = () => withdraw({tournamentId: props.data.id}, onSuccess, onError);
+    const onSuccess = (message) => {
+        setShow(false);
+        navigate("/dashboard/participant");
+        alert(message);
+    }
+    const onError = (message) => alert(message)
 
     return (
         <React.Fragment>

@@ -6,7 +6,6 @@
 
     .sport_result {
         margin-bottom: 0;
-        text-align: center;
         padding: 0.5rem;
 
         &.winner {
@@ -19,12 +18,12 @@
             color: #7f8c8d;
         }
 
-        &.upcoming {
+        &.pending {
             background-color: rgba(52, 152, 219, 0.2);
             color: #3498db;
         }
 
-        &.disqualified {
+        &.disqualified, &.cancelled {
             background-color: rgba(231, 77, 60, 0.2);
             color: #e74c3c;
         }

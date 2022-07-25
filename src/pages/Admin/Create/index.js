@@ -124,14 +124,14 @@ const Create = () => {
         if(data.description === "") errorCopy.description = true;
         if(data.teamSize === "") errorCopy.teamSize = true;
         if(data.eventDate === "") errorCopy.eventDate = true;
-        if(new Date(data.eventDate) <= new Date()) errorCopy.eventDate = true;
         if(data.deadlineDate === "") errorCopy.deadlineDate = true;
+        if(new Date(data.eventDate) <= new Date()) errorCopy.eventDate = true;
         if(new Date(data.deadlineDate) <= new Date()) errorCopy.deadlineDate = true;
         if(new Date(data.deadlineDate) > new Date(data.eventDate)) {
             errorCopy.eventDate = true;
             errorCopy.deadlineDate = true;
         }
-
+        
         setError(errorCopy);
 
         if(Object.values(errorCopy).includes(true)) {

@@ -57,6 +57,8 @@ const Tournaments = () => {
         return copy;
     });
 
+    modifiedTournaments.sort((a, b) => a.type - b.type);
+
     return (
         loading? 
         <div className="page-loader">

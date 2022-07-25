@@ -194,3 +194,18 @@ export const applyTournament = async (data, onSuccess, onError) => {
         onError("Unable to process request. Try again")
     }
 }
+
+export const withdraw = async (data, onSuccess, onError) => {
+    try {
+        await axios.post("http://localhost:8000/participant/withdraw", data);
+        onSuccess("Withdrawed from tournament successfully");
+    }
+    catch(e) {
+        const error = e?.response?.data?.error;
+        
+        if(error && error?.code === "VALIDATION_FAILED")
+            return onError(error.message, error.errors);
+
+        onError("Unable to process request. Try again")
+    }
+}
