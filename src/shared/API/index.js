@@ -7,7 +7,7 @@ export const login = async (data, onSuccess, onError) => {
             password: data.password,
         };
 
-        const response = await axios.post("http://localhost:8000/authentication/login", body);
+        const response = await axios.post("/authentication/login", body);
         onSuccess("Login successfull", response.data.data.user);
     }
     catch(e) {
@@ -22,7 +22,7 @@ export const login = async (data, onSuccess, onError) => {
 
 export const register = async (data, onSuccess, onError) => {
     try {
-        await axios.post("http://localhost:8000/authentication/register", {...data, bloodGroup: data.bloodGroup.value});        
+        await axios.post("/authentication/register", {...data, bloodGroup: data.bloodGroup.value});        
         onSuccess("Register successfull. Continue to login");
     }
     catch(e) {
@@ -37,7 +37,7 @@ export const register = async (data, onSuccess, onError) => {
 
 export const reset = async (data, onSuccess, onError) => {
     try {
-        await axios.post(`http://localhost:8000/authentication/reset-password`, data);
+        await axios.post(`/authentication/reset-password`, data);
         onSuccess("Password changed successfully");
     }
     catch(e) {
@@ -52,7 +52,7 @@ export const reset = async (data, onSuccess, onError) => {
 
 export const logout = async (onSuccess, onError) => {
     try {
-        await axios.get("http://localhost:8000/authentication/logout");
+        await axios.get("/authentication/logout");
         onSuccess("Logout successfull");
     }
     catch(e) {
@@ -62,7 +62,7 @@ export const logout = async (onSuccess, onError) => {
 
 export const fetchUser = async (onSuccess, onError) => {
     try {
-        const response  = await axios.get("http://localhost:8000/authentication/user");
+        const response  = await axios.get("/authentication/user");
         onSuccess("User loaded successfully", response.data.data.user);
     }
     catch(e) {
@@ -72,7 +72,7 @@ export const fetchUser = async (onSuccess, onError) => {
 
 export const createTournament = async (data, onSuccess, onError) => {
     try {
-        const response = await axios.post("http://localhost:8000/administrator/tournaments/create", data);
+        const response = await axios.post("/administrator/tournaments/create", data);
         onSuccess("Tournament created successfully", response.data.data.tournament);
     }
     catch(e) {
@@ -87,7 +87,7 @@ export const createTournament = async (data, onSuccess, onError) => {
 
 export const fetchTournament = async (id, onSuccess, onError) => {
     try {
-        const response = await axios.get(`http://localhost:8000/administrator/tournaments/${id}`);
+        const response = await axios.get(`/administrator/tournaments/${id}`);
         return onSuccess("Trounament loaded successfully", response.data.data.tournament);
     }
     catch(e) {
@@ -97,7 +97,7 @@ export const fetchTournament = async (id, onSuccess, onError) => {
 
 export const cancelTournament = async (id, onSuccess, onError) => {
     try {
-        await axios.post(`http://localhost:8000/administrator/tournaments/cancel/${id}`);
+        await axios.post(`/administrator/tournaments/cancel/${id}`);
         onSuccess("Tournament cancelled successfully");
     }
     catch(e) {
@@ -107,7 +107,7 @@ export const cancelTournament = async (id, onSuccess, onError) => {
 
 export const editTournament = async (data, onSuccess, onError) => {
     try {
-        await axios.post(`http://localhost:8000/administrator/tournaments/edit/${data.id}`, data);
+        await axios.post(`/administrator/tournaments/edit/${data.id}`, data);
         onSuccess("Tournament details updated successfully");
     }
     catch(e) {
@@ -122,7 +122,7 @@ export const editTournament = async (data, onSuccess, onError) => {
 
 export const fetchTournaments = async (onSuccess, onError) => {
     try {
-        const response = await axios.get("http://localhost:8000/administrator/tournaments");
+        const response = await axios.get("/administrator/tournaments");
         onSuccess("Trounaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
@@ -132,7 +132,7 @@ export const fetchTournaments = async (onSuccess, onError) => {
 
 export const updateResult = async (data, onSuccess, onError) => {
     try {
-        const response = await axios.post("http://localhost:8000/administrator/team/result", data);   
+        const response = await axios.post("/administrator/team/result", data);   
         onSuccess("Result updated successfully", data.result);
     }
     catch(e) {
@@ -147,7 +147,7 @@ export const updateResult = async (data, onSuccess, onError) => {
 
 export const fetchAvaliableTournaments = async (onSuccess, onError) => {
     try {
-        const response = await axios.post(`http://localhost:8000/participant/available/`, { today: new Date().toGMTString() });
+        const response = await axios.post(`/participant/available/`, { today: new Date().toGMTString() });
         return onSuccess("Avaliable trounaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
@@ -157,7 +157,7 @@ export const fetchAvaliableTournaments = async (onSuccess, onError) => {
 
 export const fetchRegisteredTournaments = async (onSuccess, onError) => {
     try {
-        const response = await axios.get("http://localhost:8000/participant/registered");
+        const response = await axios.get("/participant/registered");
         onSuccess("Registered tournaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
@@ -167,7 +167,7 @@ export const fetchRegisteredTournaments = async (onSuccess, onError) => {
 
 export const editProfile = async (data, onSuccess, onError) => {
     try {
-        await axios.post(`http://localhost:8000/participant/profile`, {...data, bloodGroup: data.bloodGroup.value});
+        await axios.post(`/participant/profile`, {...data, bloodGroup: data.bloodGroup.value});
         onSuccess("Profile has been updated successfully");
     }
     catch(e) {
@@ -182,7 +182,7 @@ export const editProfile = async (data, onSuccess, onError) => {
 
 export const applyTournament = async (data, onSuccess, onError) => {
     try {
-        await axios.post("http://localhost:8000/participant/apply", data);
+        await axios.post("/participant/apply", data);
         onSuccess("Tournament applied successfully");
     }
     catch(e) {
@@ -197,7 +197,7 @@ export const applyTournament = async (data, onSuccess, onError) => {
 
 export const withdraw = async (data, onSuccess, onError) => {
     try {
-        await axios.post("http://localhost:8000/participant/withdraw", data);
+        await axios.post("/participant/withdraw", data);
         onSuccess("Withdrawed from tournament successfully");
     }
     catch(e) {
@@ -212,7 +212,7 @@ export const withdraw = async (data, onSuccess, onError) => {
 
 export const addAdministrators = async (data, onSuccess, onError) => {
     try {
-        await axios.post("http://localhost:8000/administrator/add", data);
+        await axios.post("/administrator/add", data);
         onSuccess("Administrators created successfully");
     }
     catch(e) {

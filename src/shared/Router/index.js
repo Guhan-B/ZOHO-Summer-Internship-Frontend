@@ -1,6 +1,5 @@
 import React from 'react';
 import Loader from "react-spinners/MoonLoader";
-import axios from 'axios';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from "react-router-dom";
 
 import Login from "../../pages/Login";
@@ -37,7 +36,6 @@ const Router = () => {
     }
 
     React.useEffect(() => {
-        axios.defaults.withCredentials = true;
         fetchUser(onSuccess, onError);
     }, []);
 
