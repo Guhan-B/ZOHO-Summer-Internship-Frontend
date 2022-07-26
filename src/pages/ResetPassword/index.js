@@ -15,7 +15,7 @@ const ResetPassword = () => {
 
     const [state, setState] = React.useContext(AuthenticationContext);
     const [data, setData] = React.useState({password: ""});
-    const [error, setError] = React.useState({password: false});
+    const [error, setError] = React.useState({password: {value: false, message: ""}});
     const [loading ,setLoading] = React.useState(false);
 
     const FormFields = [
@@ -37,9 +37,11 @@ const ResetPassword = () => {
 
     const onError = (message, returnedError) => {
         setLoading(false);
-        const resetError = { password: false };
-        if(returnedError) setError({...resetError, ...returnedError});
-        alert(message);
+        const resetError = {password: {value: false, message: ""}};
+        if(returnedError) 
+            setError({...resetError, ...returnedError});
+        else
+            alert(message);
     }  
 
     const onChange = (value, name) => {
@@ -51,18 +53,15 @@ const ResetPassword = () => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const errorCopy = { email: false, password: false };
+        const errorCopy = {password: {value: false, message: ""}} ;
 
-        if(data.password === "" || data.password.length < 8) errorCopy.password = true;
+        if(data.password === "" || data.password.length < 8) 
+            errorCopy.password = {value: true, message: "Password should be minimum 8 characters"};
 
         setError(errorCopy);
-
-        if(Object.values(errorCopy).includes(true))
-            alert("Password entered is invalid");
-        else {
-            setLoading(true);
-            reset(data, onSuccess, onError);
-        }
+        if(errorCopy.password.value) return;
+        setLoading(true);
+        reset(data, onSuccess, onError);
     }
 
     if(state.status === false) 
@@ -87,7 +86,8 @@ const ResetPassword = () => {
                                 placeholder={field.placeholder}
                                 icon={field.icon}
                                 value={data[field.name]}
-                                error={error[field.name]}
+                                error={error[field.name].value}
+                                errorMessage={error[field.name].message}
                                 onChange={value => onChange(value, field.name)}
                                 {...field.props}
                             />

@@ -9,10 +9,10 @@ import { fetchTournaments } from "../../../shared/API"
 import styles from "./styles.module.scss";
 
 const Tournaments = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
     const [tournaments, setTournaments] = React.useState([]);
-    const navigate = useNavigate();
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -25,10 +25,7 @@ const Tournaments = () => {
         alert(message);
     }
 
-    React.useEffect(() => {
-        fetchTournaments(onSuccess, onError);
-    }, []);
-
+    React.useEffect(() => { fetchTournaments(onSuccess, onError) }, []);
 
     if(loading === false && error === true) {
         return (

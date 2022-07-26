@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import InputField from '../../../shared/components/InputField';
 import Button from "../../../shared/components/Button";
@@ -10,9 +10,7 @@ import styles from "./styles.module.scss";
 const Edit = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
-
     const [loading, setLoading] = React.useState(false);
-
     const [data, setData] = React.useState({
         id: state.id,
         name: state.name,
@@ -22,16 +20,14 @@ const Edit = () => {
         eventDate: new Date(state.eventDate).toISOString().replace(":00.000Z", ""),
         deadlineDate: new Date(state.deadlineDate).toISOString().replace(":00.000Z", ""),
     });
-
     const [error, setError] = React.useState({
-        name: false,
-        sport: false,
-        description: false,
-        teamSize: false,
-        eventDate: false,
-        deadlineDate: false
+        name: { value: false, message: "" },
+        sport: { value: false, message: "" },
+        description: { value: false, message: "" },
+        teamSize: { value: false, message: "" },
+        eventDate: { value: false, message: "" },
+        deadlineDate: { value: false, message: "" },
     });
-
     const FormFields = [
         {
             type: "text",
@@ -83,7 +79,7 @@ const Edit = () => {
         setData(dataCopy);
     }
 
-    const onSuccess = (message, data) => {
+    const onSuccess = (message) => {
         setLoading(false);
         navigate(`/dashboard/administrator/tournaments/${state.id}`);
         alert(message);
@@ -91,56 +87,47 @@ const Edit = () => {
 
     const onError = (message, returnedError) => {
         setLoading(false);
-        const resetError = {
-            name: false,
-            sport: false,
-            description: false,
-            teamSize: false,
-            eventDate: false,
-            deadlineDate: false
-        }
-        if(returnedError) setError({...resetError, ...returnedError});
-        alert(message);
+        const resetError = {};
+        for(var key in error) resetError[key] = { value: false, message: "" };
+        if(returnedError) 
+            setError({...resetError, ...returnedError});
+        else
+            alert(message);
     }
 
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const errorCopy = {
-            name: false,
-            sport: false,
-            description: false,
-            teamSize: false,
-            eventDate: false,
-            deadlineDate: false,
-        };
+        const errorCopy = {};
+        for(var key in error) errorCopy[key] = { value: false, message: "" }
 
-        if(data.name === "") errorCopy.name = true;
-        if(data.sport === "") errorCopy.sport = true;
-        if(data.description === "") errorCopy.description = true;
-        if(data.teamSize === "") errorCopy.teamSize = true;
-        if(data.eventDate === "") errorCopy.eventDate = true;
-        if(new Date(data.eventDate) <= new Date()) errorCopy.eventDate = true;
-        if(data.deadlineDate === "") errorCopy.deadlineDate = true;
-        if(new Date(data.deadlineDate) <= new Date()) errorCopy.deadlineDate = true;
+        if(data.name === "") 
+            errorCopy.name = { value: true, message: "Name cannot be empty" };
+        if(data.sport === "") 
+            errorCopy.sport = { value: true, message: "Sport cannot be empty" };
+        if(data.description === "") 
+            errorCopy.description = { value: true, message: "Description cannot be empty" };
+        if(data.teamSize === "") 
+            errorCopy.teamSize = { value: true, message: "Team Size cannot be empty" };
+        if(data.eventDate === "") 
+            errorCopy.eventDate = { value: true, message: "Event Date cannot be empty" };
+        if(data.deadlineDate === "") 
+            errorCopy.deadlineDate = { value: true, message: "Deadline cannot be empty" };
+        if(new Date(data.eventDate) <= new Date()) 
+            errorCopy.eventDate = { value: true, message: "Event Date should be after today's date" };  
+        if(new Date(data.deadlineDate) <= new Date()) 
+            errorCopy.deadlineDate = { value: true, message: "Deadline should be after today's date" };
         if(new Date(data.deadlineDate) > new Date(data.eventDate)) {
-            errorCopy.eventDate = true;
-            errorCopy.deadlineDate = true;
+            errorCopy.eventDate = { value: true, message: "Event Date should be after Deadline Date" };
+            errorCopy.deadlineDate = { value: true, message: "Dealine Date should be before Event Date" };;
         }
-
-        setError(errorCopy);
-
-        if(Object.values(errorCopy).includes(true)) {
-            alert("One or more field is invalid");
-        }
-        else {
-            setLoading(true);
-
-            data.eventDate = new Date(data.eventDate).toUTCString();
-            data.deadlineDate = new Date(data.deadlineDate).toUTCString();
         
-            editTournament(data, onSuccess, onError);
-        }
+        setError(errorCopy);
+        if(Object.values(errorCopy).map(i => i.value).includes(true)) return;
+        setLoading(true);
+        data.eventDate = new Date(data.eventDate).toUTCString();
+        data.deadlineDate = new Date(data.deadlineDate).toUTCString();
+        editTournament(data, onSuccess, onError);
     }
 
     return (
@@ -159,7 +146,8 @@ const Edit = () => {
                                 label={field.label}
                                 required={field.required}
                                 value={data[field.name]}
-                                error={error[field.name]}
+                                error={error[field.name].value}
+                                errorMessage={error[field.name].message}
                                 onChange={value => onChange(value, field.name)}
                                 {...field.props}
                             />

@@ -29,10 +29,10 @@ const EditProfile = () => {
         email: state.user.email, 
     });
     const [error, setError] = React.useState({
-        name: false, 
-        mobileNumber: false, 
-        bloodGroup: false, 
-        email: false
+        name: { value: false, message: "" }, 
+        mobileNumber: { value: false, message: "" }, 
+        bloodGroup: { value: false, message: "" }, 
+        email: { value: false, message: "" }
     });
     const [loading, setLoading] = React.useState(false);
 
@@ -83,14 +83,12 @@ const EditProfile = () => {
 
     const onError = (message, returnedError) => {
         setLoading(false);
-        const resetError = {
-            name: false, 
-            mobileNumber: false, 
-            bloodGroup: false, 
-            email: false
-        }
-        if(returnedError) setError({...resetError, ...returnedError});
-        alert(message);
+        const resetError = {};
+        for(var key in error) resetError[key] = { value: false, message: "" }
+        if(returnedError) 
+            setError({...resetError, ...returnedError});
+        else
+            alert(message);
     }  
 
     const onChange = (value, name) => {
@@ -102,25 +100,20 @@ const EditProfile = () => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const errorCopy = {
-            name: false, 
-            mobileNumber: false, 
-            bloodGroup: false, 
-            email: false, 
-        };
+        const errorCopy = {};
+        for(var key in error) errorCopy[key] = { value: false, message: "" };
 
-        if(data.name === "") errorCopy.name = true;
-        if(data.mobileNumber === "" || validator.isMobilePhone(data.mobileNumber) === false) errorCopy.mobileNumber = true;
-        if(data.bloodGroup.value === "") errorCopy.bloodGroup = true;
+        if(data.name === "") 
+            errorCopy.name = { value: true, message: "Name cannot be empty" };
+        if(validator.isMobilePhone(data.mobileNumber) === false) 
+            errorCopy.mobileNumber = { value: true, message: "Mobile Number is badly formatted" };
+        if(data.bloodGroup.value === "") 
+            errorCopy.bloodGroup = { value: true, message: "Blood Group cannot be empty" };
 
         setError(errorCopy);
-
-        if(Object.values(errorCopy).includes(true))
-            alert("One or more field is invalid");
-        else {
-            setLoading(true);
-            editProfile(data, onSuccess, onError);
-        }
+        if(Object.values(errorCopy).map(i => i.value).includes(true)) return;
+        setLoading(true);
+        editProfile(data, onSuccess, onError);
     }
 
     return (
@@ -139,7 +132,8 @@ const EditProfile = () => {
                             icon={field.icon}
                             required={field.required}
                             value={data[field.name]}
-                            error={error[field.name]}
+                            error={error[field.name].value}
+                            errorMessage={error[field.name].message}
                             onChange={value => onChange(value, field.name)}
                             {...field.props}
                         />

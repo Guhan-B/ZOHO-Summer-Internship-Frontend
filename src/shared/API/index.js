@@ -209,3 +209,18 @@ export const withdraw = async (data, onSuccess, onError) => {
         onError("Unable to process request. Try again")
     }
 }
+
+export const addAdministrators = async (data, onSuccess, onError) => {
+    try {
+        await axios.post("http://localhost:8000/administrator/add", data);
+        onSuccess("Administrators created successfully");
+    }
+    catch(e) {
+        const error = e?.response?.data?.error;
+        
+        if(error && error?.code === "VALIDATION_FAILED")
+            return onError(error.message, error.errors);
+
+        onError("Unable to process request. Try again")
+    }
+}

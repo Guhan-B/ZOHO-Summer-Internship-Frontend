@@ -1,6 +1,5 @@
 import React from 'react';
 import SpinLoader from "react-spinners/MoonLoader";
-import WaveLoader from "react-spinners/PulseLoader";
 import { MdOutlinePermIdentity, MdOutlineEventNote, MdKeyboardArrowDown } from "react-icons/md";
 import { useNavigate, useParams } from 'react-router-dom';
 import { cancelTournament, fetchTournament, updateResult } from "../../../shared/API";
@@ -18,17 +17,25 @@ const RESULTS = [
     { label: "NOT PARTICIPATED", value: 1, class: styles.not_participated  },
     { label: "DISQUALIFIED", value: 2, class: styles.disqualified  },
     { label: "LOST", value: 3, class: styles.lost },
-    { label: "WINNER", value: 4, class: styles.winner },
+    { label: "1ST PLACE", value: 4, class: styles.winner },
+    { label: "2ND PLACE", value: 5, class: styles.winner },
+    { label: "3RD PLACE", value: 6, class: styles.winner },
 ];
 
 const Details = () => {
     const navigate = useNavigate();
     const params = useParams();
-
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
     const [tournament, setTournament] = React.useState(null);
     const [showModal, setShowModal] = React.useState(false);
+    const config = {
+        day: "2-digit", 
+        month: "2-digit", 
+        year: "numeric", 
+        hour: "2-digit", 
+        minute: "2-digit",
+    }
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -38,6 +45,7 @@ const Details = () => {
     const onError = (message) => {
         setLoading(false);
         setError(true);
+        alert(message);
     }
 
     const onEdit = () => {
@@ -50,22 +58,13 @@ const Details = () => {
             eventDate: tournament.event_date,
             deadlineDate: tournament.deadline_date,
         };
-
         navigate("edit", { state: data });
     }
 
     const onContinue = () => {
-        cancelTournament(
-            params.id, 
-            (message, data) => {
-                navigate("/dashboard/administrator");
-                alert(message);
-            },
-            (message) => {
-                alert(message);
-            }
-        );
-
+        const onCancelSuccess = (message) => {navigate("/dashboard/administrator");alert(message);}
+        const onCancelError = (message) => alert(message);
+        cancelTournament(params.id, onCancelSuccess, onCancelError);
         setShowModal(false);
     }
 
@@ -74,17 +73,7 @@ const Details = () => {
         fetchTournament(params.id, onSuccess, onError);
     }, []);
 
-    const config = {
-        day: "2-digit", 
-        month: "2-digit", 
-        year: "numeric", 
-        hour: "2-digit", 
-        minute: "2-digit",
-    }
-
-    var eventDate;
-
-    if(tournament) eventDate = new Date(tournament.event_date);
+    const eventDate = new Date(tournament?.event_date);
 
     if(loading === false && error === true) {
         return (
@@ -124,7 +113,7 @@ const Details = () => {
             <header>
                 <h1>{ tournament.name }</h1>
                 {
-                    tournament.cancelled === 0 &&
+                    tournament.cancelled === 0 && new Date() < new Date(tournament.event_date) &&
                     <div className={styles.actions}>
                         <Button label="Edit Details" size="small" variant="primary" onClick={onEdit}/>
                         <Button label="Cancel Tournament" size="small" variant="danger" onClick={() => setShowModal(true)}/>

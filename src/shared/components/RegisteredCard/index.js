@@ -15,16 +15,19 @@ const config = {
     minute: "2-digit",
 }
 
+const RESULTS = [
+    { label: "PENDING", value: 0, class: styles.pending },
+    { label: "NOT PARTICIPATED", value: 1, class: styles.not_participated  },
+    { label: "DISQUALIFIED", value: 2, class: styles.disqualified  },
+    { label: "LOST", value: 3, class: styles.disqualified  },
+    { label: "1ST PLACE", value: 4, class: styles.winner },
+    { label: "2ND PLACE", value: 5, class: styles.winner },
+    { label: "3RD PLACE", value: 6, class: styles.winner },
+    { label: "CANCELLED", value: 7, class: styles.disqualified },
+];
+
 const RegisteredCard = (props) => {
-    const result = [
-        { label: "PENDING", class:  styles.pending },
-        { label: "NOT PARTICIPATED", class:  styles.not_participated },
-        { label: "DISQUALIFIED", class:  styles.disqualified },
-        { label: "LOST", class:  styles.lost },
-        { label: "WINNER", class:  styles.winner },
-        { label: "CANCELLED", class:  styles.cancelled },
-    ];
-    const resultClasses = [styles.sport_result, result[props.data.team.result].class];
+    const resultClasses = [styles.sport_result, RESULTS[props.data.team.result].class];
     const eventDate = new Date(props.data.event_date);
     const [show, setShow] = React.useState(false);
     const navigate = useNavigate()
@@ -89,7 +92,7 @@ const RegisteredCard = (props) => {
                 </div>
                 
                 <div className={resultClasses.join(" ")}>
-                    <p>{ result[props.data.team.result].label }</p>
+                    <p>{ RESULTS[props.data.team.result].label }</p>
                 </div>
             </div>
         </React.Fragment>

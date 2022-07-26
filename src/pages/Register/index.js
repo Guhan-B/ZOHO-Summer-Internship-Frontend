@@ -34,11 +34,11 @@ const Register = (props) => {
         password: ""
     });
     const [error, setError] = React.useState({
-        name: false, 
-        mobileNumber: false, 
-        bloodGroup: false, 
-        email: false, 
-        password: false
+        name: {value: false, message: ""}, 
+        mobileNumber: {value: false, message: ""}, 
+        bloodGroup: {value: false, message: ""}, 
+        email: {value: false, message: ""}, 
+        password: {value: false, message: ""}
     });
     const [loading ,setLoading] = React.useState(false);
 
@@ -93,15 +93,9 @@ const Register = (props) => {
 
     const onError = (message, returnedError) => {
         setLoading(false);
-        const resetError = {
-            name: false, 
-            mobileNumber: false, 
-            bloodGroup: false, 
-            email: false, 
-            password: false
-        }
+        const resetError = {};
+        for(var key in error) resetError[key] = { value: false, message: "" }
         if(returnedError) setError({...resetError, ...returnedError});
-        alert(message);
     }  
 
     const onChange = (value, name) => {
@@ -113,28 +107,21 @@ const Register = (props) => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const errorCopy = {
-            name: false, 
-            mobileNumber: false, 
-            bloodGroup: false, 
-            email: false, 
-            password: false
-        };
+        const errorCopy = {};
+        for(var key in error) errorCopy[key] = { value: false, message: "" };
 
-        if(data.name === "") errorCopy.name = true;
-        if(data.mobileNumber === "" || validator.isMobilePhone(data.mobileNumber) === false) errorCopy.mobileNumber = true;
-        if(data.bloodGroup.value === "") errorCopy.bloodGroup = true;
-        if(data.email === "" || validator.isEmail(data.email) === false) errorCopy.email = true;
-        if(data.password === "" || data.password.length < 8) errorCopy.password = true;
+        if(data.name === "") errorCopy.name = {value: true, message: "Name cannot be empty"};
+        if(validator.isMobilePhone(data.mobileNumber) === false) errorCopy.mobileNumber = {value: true, message: "Mobile Number is badly formatted"};
+        if(data.bloodGroup.value === "") errorCopy.bloodGroup = {value: true, message: "Blood Group cannot be empty"};
+        if(validator.isEmail(data.email) === false) errorCopy.email = {value: true, message: "Email is badly formatted"};
+        if(data.password.length < 8) errorCopy.password = {value: true, message: "Passowrd should be minimum 8 characters"};
 
         setError(errorCopy);
 
-        if(Object.values(errorCopy).includes(true))
-            alert("One or more field is invalid.");
-        else {
-            setLoading(true);
-            register(data, onSuccess, onError);
-        }
+        if(Object.values(errorCopy).map(i => i.value).includes(true)) return;
+        
+        setLoading(true);
+        register(data, onSuccess, onError);
     }
 
     if(state.status) 
@@ -157,7 +144,8 @@ const Register = (props) => {
                                 placeholder={field.placeholder}
                                 icon={field.icon}
                                 value={data[field.name]}
-                                error={error[field.name]}
+                                error={error[field.name].value}
+                                errorMessage={error[field.name].message}
                                 onChange={value => onChange(value, field.name)}
                                 {...field.props}
                             />

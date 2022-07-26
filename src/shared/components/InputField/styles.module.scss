@@ -5,6 +5,12 @@
     width: 100%;
     position: relative;
 
+    .error_message {
+        color: #e74c3c;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+    }
+
     &.select {
         input:disabled {
             color: #2c3e50;

@@ -42,11 +42,12 @@ const Input = (props) => {
                     onBlur={() => setIsFocus(false)} 
                     placeholder={props.placeholder}
                     disabled={props.disabled}
-                    onChange={(e) => props.onChange(e.target.value)}
+                    onChange={props.disabled? () => {} : (e) => props.onChange(e.target.value)}
                     value={props.value}
                 />
                 { props.icon && <props.icon className={styles.icon}/> }
             </div>
+            { props.error && <p className={styles.error_message}>{ props.errorMessage }</p> }
         </div>
     )
 }
@@ -82,12 +83,14 @@ const Password = (props) => {
                     onBlur={() => setIsFocus(false)}
                     placeholder={props.placeholder}
                     disabled={props.disabled}
-                    onChange={(e) => props.onChange(e.target.value)}
+                    onChange={props.disabled? () => {} : (e) => props.onChange(e.target.value)}
                     value={props.value}
                 />
                 <props.icon className={styles.icon}/>
             </div>
 
+            { props.error && <p className={styles.error_message}>{ props.errorMessage }</p> }
+            
             <span className={styles.password_toggle}>
                 <input type="checkbox" id="show" checked={showPassword} onChange={(e) => setShowPassword(!showPassword)}/>
                 <span className={checkboxClasses.join(" ")} onClick={(e) => setShowPassword(!showPassword)}>
@@ -134,6 +137,7 @@ const Select = (props) => {
                 }
                 {props.icon && <props.icon className={styles.icon}/>}
             </div>
+            { props.error && <p className={styles.error_message}>{ props.errorMessage }</p> }
         </div>
     );
 }
@@ -160,9 +164,7 @@ const TextArea = (props) => {
                 props.label && 
                 <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 
             }
-
             <span className={styles.character_count}>{props.value.length} / {props.limit}</span>
-
             <div>
                 <textarea 
                     id={props.id} 
@@ -171,12 +173,13 @@ const TextArea = (props) => {
                     placeholder={props.placeholder}
                     disabled={props.disabled}
                     rows={props.height}
-                    onChange={onChange}
+                    onChange={props.disabled ? () => {} : onChange}
                     value={props.value}
                 >  
                 </textarea>
                 { props.icon && <props.icon className={styles.icon}/> }
             </div>
+            { props.error && <p className={styles.error_message}>{ props.errorMessage }</p> }
         </div>
     )
 }

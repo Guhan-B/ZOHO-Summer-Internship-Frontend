@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached } from "react-icons/md";
+import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached, MdOutlinePersonAdd } from "react-icons/md";
 import { AuthenticationContext } from '../../providers/authentication';
 import { logout } from "../../shared/API";
 
@@ -37,6 +37,10 @@ const Admin = (props) => {
                     <NavLink to="create" className={activeClass}>
                         <MdOutlineAvTimer className={styles.icon}/>
                         <p>Create Tournament</p>                        
+                    </NavLink>
+                    <NavLink to="add" className={activeClass}>
+                        <MdOutlinePersonAdd className={styles.icon}/>
+                        <p>Add Adimnistrator</p>                        
                     </NavLink>
                     <NavLink to="/authentication/reset-password" className={activeClass}>                        
                         <MdCached className={styles.icon}/>

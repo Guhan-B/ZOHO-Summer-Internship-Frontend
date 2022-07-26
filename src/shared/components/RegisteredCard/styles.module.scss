@@ -3,10 +3,13 @@
     transition: 0.2s all ease-in-out;
     cursor: pointer;
     border-radius: 3px;
+    display: flex;
+    flex-direction: column;
 
     .sport_result {
         margin-bottom: 0;
         padding: 0.5rem;
+        margin-top: auto;
 
         &.winner {
             background-color: rgba(46, 204, 112, 0.2);

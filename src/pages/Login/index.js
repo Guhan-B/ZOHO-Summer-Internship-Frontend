@@ -15,8 +15,14 @@ const Login = () => {
     const navigate = useNavigate();
 
     const [state, setState] = React.useContext(AuthenticationContext);
-    const [data, setData] = React.useState({email: "",  password: ""});
-    const [error, setError] = React.useState({email: false, password: false});
+    const [data, setData] = React.useState({
+        email: "",  
+        password: ""
+    });
+    const [error, setError] = React.useState({
+        email: { value: false, message: "" }, 
+        password: { value: false, message: "" }
+    });
     const [loading ,setLoading] = React.useState(false);
 
     const FormFields = [
@@ -46,9 +52,9 @@ const Login = () => {
 
     const onError = (message, returnedError) => {
         setLoading(false);
-        const resetError = { email: false, password: false };
+        const resetError = {};
+        for(var key in error) resetError[key] = { value: false, message: "" }
         if(returnedError) setError({...resetError, ...returnedError});
-        alert(message);
     }  
 
     const onChange = (value, name) => {
@@ -60,19 +66,18 @@ const Login = () => {
     const onSubmit = (e) => {
         e.preventDefault();
 
-        const errorCopy = { email: false, password: false };
+        const errorCopy = {};
+        for(var key in error) errorCopy[key] = { value: false, message: "" };
 
-        if(data.email === "" || validator.isEmail(data.email) === false) errorCopy.email = true;
-        if(data.password === "" || data.password.length < 8) errorCopy.password = true;
+        if(validator.isEmail(data.email) === false) errorCopy.email = { value: true, message: "Email is badly formatted" };
+        if(data.password.length < 8) errorCopy.password = { value: true, message: "Passowrd should be minimum 8 characters" };
 
         setError(errorCopy);
 
-        if(Object.values(errorCopy).includes(true))
-            alert("One or more field is invalid");
-        else {
-            setLoading(true);
-            login(data, onSuccess, onError);
-        }
+        if(Object.values(errorCopy).map(i => i.value).includes(true)) return;
+        
+        setLoading(true);
+        login(data, onSuccess, onError);
     }
 
     if(state.status) 
@@ -97,7 +102,8 @@ const Login = () => {
                                 placeholder={field.placeholder}
                                 icon={field.icon}
                                 value={data[field.name]}
-                                error={error[field.name]}
+                                error={error[field.name].value}
+                                errorMessage={error[field.name].message}
                                 onChange={value => onChange(value, field.name)}
                                 {...field.props}
                             />

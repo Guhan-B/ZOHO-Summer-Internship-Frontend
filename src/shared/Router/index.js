@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet, useNavigate } from "rea
 
 import Login from "../../pages/Login";
 import Register from "../../pages/Register";
+import ResetPassword from '../../pages/ResetPassword';
 import Participant from "../../pages/Participant";
 import Avaliable from "../../pages/Participant/Available";
 import EditProfile from "../../pages/Participant/EditProfile";
@@ -15,7 +16,7 @@ import Tournaments from "../../pages/Admin/Tournaments";
 import Create from "../../pages/Admin/Create";
 import Details from "../../pages/Admin/Details";
 import Edit from "../../pages/Admin/Edit";
-import ResetPassword from '../../pages/ResetPassword';
+import Add from '../../pages/Admin/Add';
 import { AuthenticationContext } from '../../providers/authentication';
 import { fetchUser } from "../API";
 
@@ -68,6 +69,7 @@ const Router = () => {
                             <Route path="tournaments/:id" element={<Details />} />
                             <Route path="tournaments/:id/edit" element={<Edit />} />
                             <Route path="create" element={<Create />} />
+                            <Route path="add" element={<Add />} />
                         </Route>
                 </Route>
             </Routes>
