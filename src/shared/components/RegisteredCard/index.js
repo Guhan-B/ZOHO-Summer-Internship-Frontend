@@ -19,18 +19,18 @@ const RESULTS = [
     { label: "PENDING", value: 0, class: styles.pending },
     { label: "NOT PARTICIPATED", value: 1, class: styles.not_participated  },
     { label: "DISQUALIFIED", value: 2, class: styles.disqualified  },
-    { label: "LOST", value: 3, class: styles.disqualified  },
+    { label: "LOST", value: 3, class: styles.lost },
     { label: "1ST PLACE", value: 4, class: styles.winner },
     { label: "2ND PLACE", value: 5, class: styles.winner },
     { label: "3RD PLACE", value: 6, class: styles.winner },
-    { label: "CANCELLED", value: 7, class: styles.disqualified },
+    { label: "CANCELLED", value: 7, class: styles.cancelled },
 ];
 
 const RegisteredCard = (props) => {
-    const resultClasses = [styles.sport_result, RESULTS[props.data.team.result].class];
-    const eventDate = new Date(props.data.event_date);
     const [show, setShow] = React.useState(false);
     const navigate = useNavigate()
+    const eventDate = new Date(props.data.event_date);
+    const resultClasses = [styles.sport_result, RESULTS[props.data.team.result].class];
 
     const onClose = () => setShow(false);
     const onWithdraw = () => withdraw({tournamentId: props.data.id}, onSuccess, onError);
@@ -90,7 +90,6 @@ const RegisteredCard = (props) => {
                     </div>
                     <p className={styles.description}>{ props.data.description }</p>
                 </div>
-                
                 <div className={resultClasses.join(" ")}>
                     <p>{ RESULTS[props.data.team.result].label }</p>
                 </div>

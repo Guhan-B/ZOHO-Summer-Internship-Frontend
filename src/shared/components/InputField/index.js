@@ -36,6 +36,7 @@ const Input = (props) => {
 
             <div>
                 <input 
+                    autocomplete={false}
                     type={props.type}
                     id={props.id} 
                     onFocus={() => setIsFocus(true)} 
@@ -77,6 +78,7 @@ const Password = (props) => {
 
             <div>
                 <input 
+                    autocomplete={false}
                     type={showPassword? "text" : "password"} 
                     id={props.id} 
                     onFocus={() => setIsFocus(true)} 
@@ -92,7 +94,7 @@ const Password = (props) => {
             { props.error && <p className={styles.error_message}>{ props.errorMessage }</p> }
             
             <span className={styles.password_toggle}>
-                <input type="checkbox" id="show" checked={showPassword} onChange={(e) => setShowPassword(!showPassword)}/>
+                <input autocomplete={false} type="checkbox" id="show" checked={showPassword} onChange={(e) => setShowPassword(!showPassword)}/>
                 <span className={checkboxClasses.join(" ")} onClick={(e) => setShowPassword(!showPassword)}>
                     <span></span>
                 </span>
@@ -124,7 +126,7 @@ const Select = (props) => {
                 <label htmlFor={props.id}>{props.label} { props.required && <span className={styles.star}>*</span>}</label> 
             }
             <div>
-                <input type="text" id={props.id} value={props.value.label} placeholder={props.placeholder} disabled/>
+                <input autocomplete={false} type="text" id={props.id} value={props.value.label} placeholder={props.placeholder} disabled/>
                 {
                     isFocus &&
                     <ul className={styles.options}>

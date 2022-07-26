@@ -20,6 +20,7 @@ const RESULTS = [
     { label: "1ST PLACE", value: 4, class: styles.winner },
     { label: "2ND PLACE", value: 5, class: styles.winner },
     { label: "3RD PLACE", value: 6, class: styles.winner },
+//  { label: "CANCELLED", value: 7, class: styles.cancelled },
 ];
 
 const Details = () => {

@@ -65,14 +65,16 @@ const Add = () => {
     }
 
     const onAdd = () => {
-        const emailsCopy = [...emails];
-        const errorCopy = [...error];
+        if(emails.length < 10) {
+            const emailsCopy = [...emails];
+            const errorCopy = [...error];
 
-        emailsCopy.push("");
-        errorCopy.push({value: false, message: ""});
+            emailsCopy.push("");
+            errorCopy.push({value: false, message: ""});
 
-        setEmails(emailsCopy);
-        setError(errorCopy);
+            setEmails(emailsCopy);
+            setError(errorCopy);
+        }
     }
 
     return (
