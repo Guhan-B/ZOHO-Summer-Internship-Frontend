@@ -18,6 +18,7 @@ import Edit from "../../pages/Admin/Edit";
 import Add from '../../pages/Admin/Add';
 import { AuthenticationContext } from '../../providers/authentication';
 import { fetchUser } from "../API";
+import Alerts from '../components/Alerts';
 
 const Router = () => {
     const [state, setState] = React.useContext(AuthenticationContext);
@@ -44,34 +45,37 @@ const Router = () => {
         <div className="page-loader" style={{height: "100vh"}}>
             <Loader size={50} color="#3498db"/> 
         </div> :
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Navigate to="authentication" replace />} />
-                <Route path="authentication">
-                    <Route index element={<Navigate to="login" replace />} />
-                    <Route path="login" element={<Login />} />
-                    <Route path="register" element={<Register />} />
-                    <Route path="reset-password" element={<ResetPassword />} />
-                </Route>
-                <Route path="dashboard" element={<Dashboard/>}>
-                        <Route path="participant" element={<Participant />}>
-                            <Route index element={<Navigate to="avaliable" replace />} />
-                            <Route path="avaliable" element={<Avaliable />} />
-                            <Route path="avaliable/:id" element={<Apply />} />
-                            <Route path="registered" element={<Registered />} />
-                            <Route path="edit-profile" element={<EditProfile />} />
-                        </Route>
-                        <Route path="administrator" element={<Admin />}>
-                            <Route index element={<Navigate to="tournaments" replace />} />
-                            <Route path="tournaments" element={<Tournaments />} />
-                            <Route path="tournaments/:id" element={<Details />} />
-                            <Route path="tournaments/:id/edit" element={<Edit />} />
-                            <Route path="create" element={<Create />} />
-                            <Route path="add" element={<Add />} />
-                        </Route>
-                </Route>
-            </Routes>
-        </BrowserRouter>
+        <React.Fragment>
+            <Alerts/>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Navigate to="authentication" replace />} />
+                    <Route path="authentication">
+                        <Route index element={<Navigate to="login" replace />} />
+                        <Route path="login" element={<Login />} />
+                        <Route path="register" element={<Register />} />
+                        <Route path="reset-password" element={<ResetPassword />} />
+                    </Route>
+                    <Route path="dashboard" element={<Dashboard/>}>
+                            <Route path="participant" element={<Participant />}>
+                                <Route index element={<Navigate to="avaliable" replace />} />
+                                <Route path="avaliable" element={<Avaliable />} />
+                                <Route path="avaliable/:id" element={<Apply />} />
+                                <Route path="registered" element={<Registered />} />
+                                <Route path="edit-profile" element={<EditProfile />} />
+                            </Route>
+                            <Route path="administrator" element={<Admin />}>
+                                <Route index element={<Navigate to="tournaments" replace />} />
+                                <Route path="tournaments" element={<Tournaments />} />
+                                <Route path="tournaments/:id" element={<Details />} />
+                                <Route path="tournaments/:id/edit" element={<Edit />} />
+                                <Route path="create" element={<Create />} />
+                                <Route path="add" element={<Add />} />
+                            </Route>
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </React.Fragment>
     );
 }
 

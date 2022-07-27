@@ -5,15 +5,16 @@ import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
 
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
-import { AuthenticationContext } from "../../providers/authentication";
 import { login } from "../../shared/API";
+import { ErrorContext } from '../../providers/error';
+import { AuthenticationContext } from "../../providers/authentication";
 
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
 const Login = () => {
     const navigate = useNavigate();
-
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [state, setState] = React.useContext(AuthenticationContext);
     const [data, setData] = React.useState({
         email: "",  
@@ -54,7 +55,10 @@ const Login = () => {
         setLoading(false);
         const resetError = {};
         for(var key in error) resetError[key] = { value: false, message: "" }
-        if(returnedError) setError({...resetError, ...returnedError});
+        if(returnedError) 
+            setError({...resetError, ...returnedError});
+        else
+            insertError("Unable to login. Try again later", "error");
     }  
 
     const onChange = (value, name) => {
@@ -92,7 +96,7 @@ const Login = () => {
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id elit nibh. In vel ipsum a diam vehicula
                     </p>
                 </header>
-                <form onSubmit={onSubmit}>
+                <form autoComplete='off' onSubmit={onSubmit}>
                     {
                         FormFields.map((field, idx) => 
                             <InputField 

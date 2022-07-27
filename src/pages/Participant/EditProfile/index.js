@@ -6,8 +6,10 @@ import Button from '../../../shared/components/Button';
 import InputField from '../../../shared/components/InputField';
 import { AuthenticationContext } from '../../../providers/authentication';
 
-import styles from "./styles.module.scss";
 import { editProfile } from '../../../shared/API';
+import { ErrorContext } from '../../../providers/error';
+
+import styles from "./styles.module.scss";
 
 const bloodGroups = [
     {label: "A+", value: "A+"},
@@ -22,6 +24,7 @@ const bloodGroups = [
 
 const EditProfile = () => {
     const [state, setState] = React.useContext(AuthenticationContext);
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [data, setData] = React.useState({
         name: state.user.name, 
         mobileNumber: state.user.mobileNumber, 
@@ -78,7 +81,7 @@ const EditProfile = () => {
         stateCopy.user.mobile_number = data.mobileNumber;
         stateCopy.user.blood_group = data.bloodGroup.value;
         setState(stateCopy);
-        alert(message);
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -88,7 +91,7 @@ const EditProfile = () => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            alert(message);
+            insertError(message, "error");
     }  
 
     const onChange = (value, name) => {
@@ -121,7 +124,7 @@ const EditProfile = () => {
             <header>
                 <h4>Edit Profile Details</h4>
             </header>
-            <form onSubmit={onSubmit}>
+            <form autoComplete='off' onSubmit={onSubmit}>
                 {
                     FormFields.map((field, idx) => 
                         <InputField 

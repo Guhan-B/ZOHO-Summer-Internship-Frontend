@@ -5,8 +5,9 @@ import { MdOutlineMail, MdOutlineLock, MdOutlinePermIdentity, MdOutlinePhone, Md
 
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
-import { AuthenticationContext } from "../../providers/authentication";
 import { register } from "../../shared/API";
+import { AuthenticationContext } from "../../providers/authentication";
+import { ErrorContext } from '../../providers/error';
 
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
@@ -24,7 +25,7 @@ const bloodGroups = [
 
 const Register = (props) => {
     const navigate = useNavigate();
-
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [state, setState] = React.useContext(AuthenticationContext);
     const [data, setData] = React.useState({
         name: "", 
@@ -88,14 +89,17 @@ const Register = (props) => {
     const onSuccess = (message) => {
         setLoading(false);
         navigate("/authentication/login");
-        alert(message);
+        insertError("Registeration successfuly. Login to continue", "success");
     }
 
     const onError = (message, returnedError) => {
         setLoading(false);
         const resetError = {};
         for(var key in error) resetError[key] = { value: false, message: "" }
-        if(returnedError) setError({...resetError, ...returnedError});
+        if(returnedError) 
+            setError({...resetError, ...returnedError});
+        else
+            insertError("Unable to register. Try again later", "error");
     }  
 
     const onChange = (value, name) => {
@@ -134,7 +138,7 @@ const Register = (props) => {
                     <h1>Create Account & Get Started</h1>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id elit nibh. In vel ipsum a diam vehicula</p>
                 </header>
-                <form onSubmit={onSubmit}>
+                <form autoComplete='off' onSubmit={onSubmit}>
                     {
                         FormFields.map((field, idx) => 
                             <InputField 

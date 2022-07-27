@@ -23,7 +23,6 @@ const Registered = () => {
     const onError = (message) => {
         setLoading(false);
         setError(true);
-        alert(message);
     }
 
     React.useEffect(() => {

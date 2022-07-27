@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdPermIdentity, MdLogout, MdCached } from "react-icons/md";
 import { AuthenticationContext } from '../../providers/authentication';
 import { logout } from "../../shared/API";
+import { ErrorContext } from '../../providers/error';
 
 import styles from "./styles.module.scss";
 
@@ -10,15 +11,17 @@ const Participant = (props) => {
     const navigate = useNavigate();
     const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
     const [state, setState] = React.useContext(AuthenticationContext);
+    const [errors, insertError] = React.useContext(ErrorContext);
 
-    const onLogout = () => {
+    const onLogout = (data) => {
         logout(
+            data,
             (message) => {
                 setState({ user: null, status: false });
                 navigate("/");
-                alert(message);
+                insertError(message, "success")
             },
-            (message) => alert(message)
+            (message) => insertError(message, "error")
         );
     };
 
@@ -46,9 +49,13 @@ const Participant = (props) => {
                         <MdCached className={styles.icon}/>
                         <p>Reset Password</p>                        
                     </NavLink>
-                    <span className={styles.link} onClick={onLogout}>                        
+                    <span className={styles.link} onClick={() => onLogout({all: false})}>                        
                         <MdLogout className={styles.icon}/>
                         <p>Logout</p>                        
+                    </span>
+                    <span className={styles.link} onClick={() => onLogout({all: true})}>                        
+                        <MdLogout className={styles.icon}/>
+                        <p>Logout From All Devices</p>                        
                     </span>
                 </div>
             </div>

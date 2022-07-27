@@ -6,6 +6,7 @@ import Button from '../../../shared/components/Button';
 import InputField from '../../../shared/components/InputField';
 import { AuthenticationContext } from '../../../providers/authentication';
 import { applyTournament } from "../../../shared/API";
+import { ErrorContext } from '../../../providers/error';
 
 import styles from "./styles.module.scss";
 
@@ -13,6 +14,7 @@ const Apply = () => {
     const routeState = useLocation().state;
     const contextState = React.useContext(AuthenticationContext)[0];
     const navigate = useNavigate();
+    const [errors, insertError] = React.useContext(ErrorContext);
 
     const [data, setData] = React.useState({ 
         tournamentId: routeState.id, 
@@ -32,7 +34,7 @@ const Apply = () => {
     const onSuccess = (message) => {
         setLoading(false);
         navigate("/dashboard/participant");
-        alert(message);
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -45,7 +47,7 @@ const Apply = () => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            alert(message);
+            insertError(message, "error");
     }  
 
     const onTeamNameChange = teamName => setData({...data, teamName });
@@ -74,8 +76,10 @@ const Apply = () => {
         if(data.teamName === "") errorCopy.teamName = { value: true, message: "Team Name cannot be empty" };
 
         for(var i = 0; i < routeState.teamSize; i++) {
-            if(validator.isEmail(data.emails[i]) === false) errorCopy.emails[i] = { value: true, message: "Email cannot be empty" };
-            if(data.names[i] === "") errorCopy.names[i] = { value: true, message: "Name cannot be empty" };
+            if(validator.isEmail(data.emails[i]) === false) 
+                errorCopy.emails[i] = { value: true, message: "Email cannot be empty" };
+            if(data.names[i] === "") 
+                errorCopy.names[i] = { value: true, message: "Name cannot be empty" };
         }
         
         setError(errorCopy);
@@ -96,7 +100,7 @@ const Apply = () => {
             <header>
                 <h4>Register for Tournament Name</h4>
             </header>
-            <form onSubmit={onSubmit}>
+            <form autoComplete='off' onSubmit={onSubmit}>
                 <InputField
                     id="Team Name"
                     type="text"

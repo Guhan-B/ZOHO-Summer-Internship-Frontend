@@ -37,8 +37,8 @@ export const register = async (data, onSuccess, onError) => {
 
 export const reset = async (data, onSuccess, onError) => {
     try {
-        await axios.post(`/authentication/reset-password`, data);
-        onSuccess("Password changed successfully");
+        const response = await axios.post(`/authentication/reset-password`, data);
+        onSuccess(response.data.data.message);
     }
     catch(e) {
         const error = e?.response?.data?.error;
@@ -50,10 +50,10 @@ export const reset = async (data, onSuccess, onError) => {
     }
 }
 
-export const logout = async (onSuccess, onError) => {
+export const logout = async (data, onSuccess, onError) => {
     try {
-        await axios.get("/authentication/logout");
-        onSuccess("Logout successfull");
+        const response = await axios.post("/authentication/logout", data);
+        onSuccess(response.data.data.message);
     }
     catch(e) {
         onError("Unable to process request. Try again");

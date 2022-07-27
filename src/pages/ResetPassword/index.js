@@ -4,15 +4,16 @@ import { MdOutlineLock } from "react-icons/md";
 
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
-import { AuthenticationContext } from "../../providers/authentication";
 import { reset } from "../../shared/API";
+import { ErrorContext } from '../../providers/error';
+import { AuthenticationContext } from "../../providers/authentication";
 
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
 const ResetPassword = () => {
     const navigate = useNavigate();
-
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [state, setState] = React.useContext(AuthenticationContext);
     const [data, setData] = React.useState({password: ""});
     const [error, setError] = React.useState({password: {value: false, message: ""}});
@@ -32,6 +33,7 @@ const ResetPassword = () => {
     const onSuccess = async (message) => {
         setLoading(false);
         setState({ user: null, status: false });
+        insertError(message, "success");
         navigate("/");
     }
 
@@ -41,7 +43,7 @@ const ResetPassword = () => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            alert(message);
+            insertError(message, "error");
     }  
 
     const onChange = (value, name) => {
@@ -73,10 +75,10 @@ const ResetPassword = () => {
                 <header>
                     <h1>Reset Password</h1>
                     <p>
-                        Choose a string password. After changing password you will be logged out
+                        Choose a strong password. After changing password you will be logged out
                     </p>
                 </header>
-                <form onSubmit={onSubmit}>
+                <form autoComplete='off' onSubmit={onSubmit}>
                     {
                         FormFields.map((field, idx) => 
                             <InputField 

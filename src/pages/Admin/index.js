@@ -1,24 +1,30 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached, MdOutlinePersonAdd } from "react-icons/md";
+import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached, MdOutlinePersonAdd, MdOutlineClose } from "react-icons/md";
+
+import Modal from "../../shared/components/Modal";
 import { AuthenticationContext } from '../../providers/authentication';
 import { logout } from "../../shared/API";
 
 import styles from "./styles.module.scss";
+import ALERT from "../../assets/alert.svg";
+import { ErrorContext } from '../../providers/error';
 
 const Admin = (props) => {
     const navigate = useNavigate();
     const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
     const [state, setState] = React.useContext(AuthenticationContext);
+    const [errors, insertError] = React.useContext(ErrorContext);
     
-    const onLogout = () => {
+    const onLogout = (data) => {
         logout(
+            data,
             (message) => {
                 setState({ user: null, status: false });
                 navigate("/");
-                alert(message);
+                insertError(message, "success")
             },
-            (message) => alert(message)
+            (message) => insertError(message, "error")
         );
     };
 
@@ -46,9 +52,13 @@ const Admin = (props) => {
                         <MdCached className={styles.icon}/>
                         <p>Reset Password</p>                        
                     </NavLink>
-                    <span className={styles.link} onClick={onLogout}>                        
+                    <span className={styles.link} onClick={() => onLogout({all: false})}>                        
                         <MdLogout className={styles.icon}/>
                         <p>Logout</p>                        
+                    </span>
+                    <span className={styles.link} onClick={() => onLogout({all: true})}>                        
+                        <MdLogout className={styles.icon}/>
+                        <p>Logout From All Devices</p>                        
                     </span>
                 </div>
             </div>

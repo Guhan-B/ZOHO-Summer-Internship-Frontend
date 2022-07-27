@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../../../shared/components/InputField';
 import Button from "../../../shared/components/Button";
 import { editTournament } from "../../../shared/API";
+import { ErrorContext } from '../../../providers/error';
 
 import styles from "./styles.module.scss";
 
@@ -11,6 +12,7 @@ const Edit = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
     const [loading, setLoading] = React.useState(false);
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [data, setData] = React.useState({
         id: state.id,
         name: state.name,
@@ -82,7 +84,7 @@ const Edit = () => {
     const onSuccess = (message) => {
         setLoading(false);
         navigate(`/dashboard/administrator/tournaments/${state.id}`);
-        alert(message);
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -92,7 +94,7 @@ const Edit = () => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            alert(message);
+            insertError(message, "error");
     }
 
     const onSubmit = (e) => {
@@ -136,7 +138,7 @@ const Edit = () => {
                 <h4>Edit Tournament : { state.name }</h4>
             </header>
             <main>
-                <form onSubmit={onSubmit}>
+                <form autoComplete='off' onSubmit={onSubmit}>
                     {
                         FormFields.map((field, idx) => 
                             <InputField 

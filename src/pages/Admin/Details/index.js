@@ -7,6 +7,7 @@ import { cancelTournament, fetchTournament, updateResult } from "../../../shared
 import Button from '../../../shared/components/Button';
 import Modal from "../../../shared/components/Modal";
 import Fallback from '../../../shared/components/Fallback';
+import { ErrorContext } from '../../../providers/error';
 
 import styles from "./styles.module.scss";
 import ALERT from "../../../assets/alert.svg";
@@ -28,6 +29,7 @@ const Details = () => {
     const params = useParams();
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [tournament, setTournament] = React.useState(null);
     const [showModal, setShowModal] = React.useState(false);
     const config = {
@@ -46,7 +48,6 @@ const Details = () => {
     const onError = (message) => {
         setLoading(false);
         setError(true);
-        alert(message);
     }
 
     const onEdit = () => {
@@ -63,8 +64,11 @@ const Details = () => {
     }
 
     const onContinue = () => {
-        const onCancelSuccess = (message) => {navigate("/dashboard/administrator");alert(message);}
-        const onCancelError = (message) => alert(message);
+        const onCancelSuccess = (message) => {
+            navigate("/dashboard/administrator");
+            insertError(message, "success");
+        }
+        const onCancelError = (message) => insertError(message, "error");
         cancelTournament(params.id, onCancelSuccess, onCancelError);
         setShowModal(false);
     }
@@ -170,6 +174,7 @@ const Row = ({ team, tournament }) => {
     const [result, setResult] = React.useState(RESULTS[team.result]);
     const [loading, setLoading] = React.useState(false);
     const allow = new Date() >= new Date(tournament.event_date);
+    const [errors, insertError] = React.useContext(ErrorContext);
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -178,7 +183,7 @@ const Row = ({ team, tournament }) => {
 
     const onError = (message) => {
         setLoading(false);
-        alert(message);
+        insertError(message, "error");
     }
 
     const onChange = async (value) => {

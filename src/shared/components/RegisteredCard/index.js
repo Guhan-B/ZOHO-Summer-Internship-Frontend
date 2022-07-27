@@ -4,6 +4,7 @@ import { MdOutlineEventNote, MdStars } from "react-icons/md"
 
 import Modal from '../Modal';
 import { withdraw } from "../../API";
+import { ErrorContext } from '../../../providers/error';
 
 import styles from "./styles.module.scss";
 
@@ -30,6 +31,7 @@ const RegisteredCard = (props) => {
     const [show, setShow] = React.useState(false);
     const navigate = useNavigate()
     const eventDate = new Date(props.data.event_date);
+    const [errors, insertError] = React.useContext(ErrorContext);
     const resultClasses = [styles.sport_result, RESULTS[props.data.team.result].class];
 
     const onClose = () => setShow(false);
@@ -37,9 +39,9 @@ const RegisteredCard = (props) => {
     const onSuccess = (message) => {
         setShow(false);
         navigate("/dashboard/participant");
-        alert(message);
+        insertError(message, "success");
     }
-    const onError = (message) => alert(message)
+    const onError = (message) => insertError(message, "error");
 
     return (
         <React.Fragment>

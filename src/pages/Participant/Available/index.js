@@ -22,7 +22,6 @@ const Avaliable = () => {
     const onError = (message) => {
         setLoading(false);
         setError(true);
-        alert(message);
     }
 
     React.useEffect(() => {

@@ -5,6 +5,7 @@ import InputField from '../../../shared/components/InputField';
 import Button from "../../../shared/components/Button";
 import { MdDeleteOutline, MdAdd } from "react-icons/md";
 import { addAdministrators } from "../../../shared/API";
+import { ErrorContext } from '../../../providers/error';
 
 import styles from "./styles.module.scss";
 
@@ -12,6 +13,7 @@ const Add = () => {
     const [emails, setEmails] = React.useState([""]);
     const [error, setError] = React.useState([{value: false, message: ""}]);
     const [loading, setLoading] = React.useState(false);
+    const [errors, insertError] = React.useContext(ErrorContext);
 
     const onChange = (idx, value) => {
         const emailsCopy = [...emails];
@@ -23,7 +25,7 @@ const Add = () => {
         setLoading(false);
         setEmails([""]);
         setError([{ value: false, message: "" }]);
-        alert(message);
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -31,7 +33,7 @@ const Add = () => {
         if(returnedError) 
             setError(returnedError);
         else
-            alert(message);
+            insertError(message, "error");
     }
 
     const onSubmit = (e) => {
@@ -84,7 +86,7 @@ const Add = () => {
         </header>
         <main>
             <button className={styles.add} onClick={onAdd}><MdAdd size={30}/></button>
-            <form onSubmit={onSubmit}>
+            <form autoComplete="off" onSubmit={onSubmit}>
                 {
                     emails.map((email, idx) => 
                         <div className={styles.email_group} key={idx}>

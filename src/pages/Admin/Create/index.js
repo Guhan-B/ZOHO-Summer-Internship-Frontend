@@ -3,11 +3,13 @@ import React from 'react';
 import InputField from '../../../shared/components/InputField';
 import Button from "../../../shared/components/Button";
 import { createTournament } from "../../../shared/API";
+import { ErrorContext } from '../../../providers/error';
 
 import styles from "./styles.module.scss";
 
 const Create = () => {
     const [loading, setLoading] = React.useState(false);  
+    const [errors, insertError] = React.useContext(ErrorContext);
     const [data, setData] = React.useState({
         name: "",
         sport: "",
@@ -80,7 +82,7 @@ const Create = () => {
         const dataReset = {};
         for(var key in data) dataReset[key] = "";
         setData(dataReset);
-        alert(message);
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -90,7 +92,7 @@ const Create = () => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            alert(message);
+            insertError(message, "error");
     }
 
     const onSubmit = (e) => {
@@ -133,7 +135,7 @@ const Create = () => {
                 <h4>Create a New Tournament</h4>
             </header>
             <main>
-                <form onSubmit={onSubmit}>
+                <form autoComplete='off' onSubmit={onSubmit}>
                     {
                         FormFields.map((field, idx) => 
                             <InputField 
