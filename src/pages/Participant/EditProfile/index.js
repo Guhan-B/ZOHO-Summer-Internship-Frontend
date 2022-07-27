@@ -1,14 +1,11 @@
 import React from 'react';
 import validator from 'validator';
-import { MdOutlineMail, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
-
 import Button from '../../../shared/components/Button';
 import InputField from '../../../shared/components/InputField';
-import { AuthenticationContext } from '../../../providers/authentication';
-
 import { editProfile } from '../../../shared/API';
 import { ErrorContext } from '../../../providers/error';
-
+import { AuthenticationContext } from '../../../providers/authentication';
+import { MdOutlineMail, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
 import styles from "./styles.module.scss";
 
 const bloodGroups = [
@@ -38,39 +35,40 @@ const EditProfile = () => {
         email: { value: false, message: "" }
     });
     const [loading, setLoading] = React.useState(false);
-
     const FormFields = [
         {
             type: "text",
+            id: "Name",
             label: "Name",
             name: "name",
             icon: MdOutlinePermIdentity,
             required: true,
-            props: {}
         },
         {
             type: "text",
+            id: "Mobile Number",
             label: "Mobile Number",
             name: "mobileNumber",
             icon: MdOutlinePhone,
             required: true,
-            props: {}
         },
         {
             type: "select",
+            id: "Blood Group",
             label: "Blood Group",
             name: "bloodGroup",
             icon: MdOutlineBloodtype,
             required: true,
-            props: { options: bloodGroups }
+            options: bloodGroups,
         },
         {
             type: "text",
+            id: "Email",
             label: "Email",
             name: "email",
             icon: MdOutlineMail,
             required: true,
-            props: { disabled: true }
+            disabled: true,
         }
     ];
 
@@ -102,17 +100,15 @@ const EditProfile = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         const errorCopy = {};
-        for(var key in error) errorCopy[key] = { value: false, message: "" };
-
+        for(var key in error) 
+            errorCopy[key] = { value: false, message: "" };
         if(data.name === "") 
             errorCopy.name = { value: true, message: "Name cannot be empty" };
         if(validator.isMobilePhone(data.mobileNumber) === false) 
             errorCopy.mobileNumber = { value: true, message: "Mobile Number is badly formatted" };
         if(data.bloodGroup.value === "") 
             errorCopy.bloodGroup = { value: true, message: "Blood Group cannot be empty" };
-
         setError(errorCopy);
         if(Object.values(errorCopy).map(i => i.value).includes(true)) return;
         setLoading(true);
@@ -129,16 +125,11 @@ const EditProfile = () => {
                     FormFields.map((field, idx) => 
                         <InputField 
                             key={idx}
-                            id={field.label}
-                            type={field.type}
-                            label={field.label}
-                            icon={field.icon}
-                            required={field.required}
                             value={data[field.name]}
                             error={error[field.name].value}
                             errorMessage={error[field.name].message}
                             onChange={value => onChange(value, field.name)}
-                            {...field.props}
+                            {...field}
                         />
                     )
                 }

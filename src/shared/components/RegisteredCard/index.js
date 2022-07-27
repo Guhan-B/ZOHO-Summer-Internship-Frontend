@@ -16,35 +16,50 @@ const config = {
     minute: "2-digit",
 }
 
+// const RESULTS = [
+//     { label: "PENDING", value: 0, class: styles.pending },
+//     { label: "NOT PARTICIPATED", value: 1, class: styles.not_participated  },
+//     { label: "DISQUALIFIED", value: 2, class: styles.disqualified  },
+//     { label: "LOST", value: 3, class: styles.disqualified  },
+//     { label: "1ST PLACE", value: 4, class: styles.winner },
+//     { label: "2ND PLACE", value: 5, class: styles.winner },
+//     { label: "3RD PLACE", value: 6, class: styles.winner },
+//     { label: "SHARED 1St PLACE", value: 7, class: styles.winner },
+//     { label: "SHARED 2St PLACE", value: 8, class: styles.winner },
+//     { label: "SHARED 3St PLACE", value: 9, class: styles.winner },
+//     { label: "CANCELLED", value: 10, class: styles.disqualified },
+// ];
+
+// array index and value attribute should be same
 const RESULTS = [
-    { label: "PENDING", value: 0, class: styles.pending },
-    { label: "NOT PARTICIPATED", value: 1, class: styles.not_participated  },
-    { label: "DISQUALIFIED", value: 2, class: styles.disqualified  },
-    { label: "LOST", value: 3, class: styles.disqualified  },
-    { label: "1ST PLACE", value: 4, class: styles.winner },
-    { label: "2ND PLACE", value: 5, class: styles.winner },
-    { label: "3RD PLACE", value: 6, class: styles.winner },
-    { label: "SHARED 1St PLACE", value: 7, class: styles.winner },
-    { label: "SHARED 2St PLACE", value: 8, class: styles.winner },
-    { label: "SHARED 3St PLACE", value: 9, class: styles.winner },
-    { label: "CANCELLED", value: 10, class: styles.disqualified },
+    { label: "CANCELLED",        value: 0,  class: styles.red   },
+    { label: "PENDING",          value: 1,  class: styles.blue  },
+    { label: "NOT PARTICIPATED", value: 2,  class: styles.gray  },
+    { label: "DISQUALIFIED",     value: 3,  class: styles.red   },
+    { label: "LOST",             value: 4,  class: styles.red   },
+    { label: "1ST PLACE",        value: 5,  class: styles.green },
+    { label: "2ND PLACE",        value: 6,  class: styles.green },
+    { label: "3RD PLACE",        value: 7,  class: styles.green },
+    { label: "SHARED 1ST PLACE", value: 8,  class: styles.green },
+    { label: "SHARED 2ST PLACE", value: 9,  class: styles.green },
+    { label: "SHARED 3ST PLACE", value: 10, class: styles.green },
 ];
 
 const RegisteredCard = (props) => {
-    const [show, setShow] = React.useState(false);
     const navigate = useNavigate()
-    const eventDate = new Date(props.data.event_date);
+    const [show, setShow] = React.useState(false);
     const [errors, insertError] = React.useContext(ErrorContext);
+    const eventDate = new Date(props.data.event_date);
     const resultClasses = [styles.sport_result, RESULTS[props.data.team.result].class];
 
-    const onClose = () => setShow(false);
+    const onClose    = () => setShow(false);
     const onWithdraw = () => withdraw({tournamentId: props.data.id}, onSuccess, onError);
-    const onSuccess = (message) => {
+    const onError    = (message) => insertError(message, "error");
+    const onSuccess  = (message) => {
         setShow(false);
         navigate("/dashboard/participant");
         insertError(message, "success");
     }
-    const onError = (message) => insertError(message, "error");
 
     return (
         <React.Fragment>

@@ -1,14 +1,12 @@
 import React from 'react';
 import validator from 'validator';
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { MdOutlineMail, MdOutlineLock, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
-
 import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
 import { register } from "../../shared/API";
-import { AuthenticationContext } from "../../providers/authentication";
 import { ErrorContext } from '../../providers/error';
-
+import { AuthenticationContext } from "../../providers/authentication";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { MdOutlineMail, MdOutlineLock, MdOutlinePermIdentity, MdOutlinePhone, MdOutlineBloodtype } from "react-icons/md";
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
@@ -42,7 +40,6 @@ const Register = (props) => {
         password: {value: false, message: ""}
     });
     const [loading ,setLoading] = React.useState(false);
-
     const FormFields = [
         {
             type: "text",
@@ -89,7 +86,7 @@ const Register = (props) => {
     const onSuccess = (message) => {
         setLoading(false);
         navigate("/authentication/login");
-        insertError("Registeration successfuly. Login to continue", "success");
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -99,7 +96,7 @@ const Register = (props) => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            insertError("Unable to register. Try again later", "error");
+            insertError(message, "error");
     }  
 
     const onChange = (value, name) => {

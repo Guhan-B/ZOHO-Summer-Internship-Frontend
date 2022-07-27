@@ -1,14 +1,12 @@
 import React from 'react';
 import validator from 'validator';
-import { Link, useNavigate, Navigate } from "react-router-dom";
-import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
-
-import InputField from '../../shared/components/InputField';
 import Button from '../../shared/components/Button';
+import InputField from '../../shared/components/InputField';
 import { login } from "../../shared/API";
 import { ErrorContext } from '../../providers/error';
 import { AuthenticationContext } from "../../providers/authentication";
-
+import { Link, useNavigate, Navigate } from "react-router-dom";
+import { MdOutlineMail, MdOutlineLock } from "react-icons/md";
 import styles from "./styles.module.scss";
 import SIDE_IMAGE from "../../assets/image 1.jpg";
 
@@ -25,23 +23,20 @@ const Login = () => {
         password: { value: false, message: "" }
     });
     const [loading ,setLoading] = React.useState(false);
-
     const FormFields = [
         {
+            id: "Email",
             type: "text",
-            label: "Email",
             placeholder: "Email",
             name: "email",
             icon: MdOutlineMail,
-            props: {}
         },
         {
+            id: "Password",
             type: "password",
-            label: "Password",
             placeholder: "Password",
             name: "password",
             icon: MdOutlineLock,
-            props: {}
         }
     ];
 
@@ -49,6 +44,7 @@ const Login = () => {
         setLoading(false);
         setState({ user: user, status: true });
         navigate("/dashboard");
+        insertError(message, "success");
     }
 
     const onError = (message, returnedError) => {
@@ -58,7 +54,7 @@ const Login = () => {
         if(returnedError) 
             setError({...resetError, ...returnedError});
         else
-            insertError("Unable to login. Try again later", "error");
+            insertError(message, "error");
     }  
 
     const onChange = (value, name) => {
@@ -69,17 +65,15 @@ const Login = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         const errorCopy = {};
         for(var key in error) errorCopy[key] = { value: false, message: "" };
-
-        if(validator.isEmail(data.email) === false) errorCopy.email = { value: true, message: "Email is badly formatted" };
-        if(data.password.length < 8) errorCopy.password = { value: true, message: "Passowrd should be minimum 8 characters" };
-
+        if(validator.isEmail(data.email) === false) 
+            errorCopy.email = { value: true, message: "Email is badly formatted" };
+        if(data.password.length < 8) 
+            errorCopy.password = { value: true, message: "Passowrd should be minimum 8 characters" };
         setError(errorCopy);
-
-        if(Object.values(errorCopy).map(i => i.value).includes(true)) return;
-        
+        if(Object.values(errorCopy).map(i => i.value).includes(true)) 
+            return;
         setLoading(true);
         login(data, onSuccess, onError);
     }
@@ -96,20 +90,16 @@ const Login = () => {
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla id elit nibh. In vel ipsum a diam vehicula
                     </p>
                 </header>
-                <form autoComplete='off' onSubmit={onSubmit}>
+                <form autoComplete='false' onSubmit={onSubmit}>
                     {
                         FormFields.map((field, idx) => 
                             <InputField 
                                 key={idx}
-                                id={field.label}
-                                type={field.type}
-                                placeholder={field.placeholder}
-                                icon={field.icon}
                                 value={data[field.name]}
                                 error={error[field.name].value}
                                 errorMessage={error[field.name].message}
                                 onChange={value => onChange(value, field.name)}
-                                {...field.props}
+                                {...field}
                             />
                         )
                     }

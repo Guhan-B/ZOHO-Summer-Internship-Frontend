@@ -1,30 +1,29 @@
 import React from 'react';
 import SpinLoader from "react-spinners/MoonLoader";
-import { MdOutlinePermIdentity, MdOutlineEventNote, MdKeyboardArrowDown } from "react-icons/md";
-import { useNavigate, useParams } from 'react-router-dom';
-import { cancelTournament, fetchTournament, updateResult } from "../../../shared/API";
-
 import Button from '../../../shared/components/Button';
 import Modal from "../../../shared/components/Modal";
 import Fallback from '../../../shared/components/Fallback';
+import InputField from '../../../shared/components/InputField';
+import { MdOutlinePermIdentity, MdOutlineEventNote, MdKeyboardArrowDown } from "react-icons/md";
+import { useNavigate, useParams } from 'react-router-dom';
+import { cancelTournament, fetchTournament, updateResult } from "../../../shared/API";
 import { ErrorContext } from '../../../providers/error';
-
 import styles from "./styles.module.scss";
 import ALERT from "../../../assets/alert.svg";
-import InputField from '../../../shared/components/InputField';
 
+// array index and value attribute should be same
 const RESULTS = [
-    { label: "PENDING", value: 0, class: styles.pending },
-    { label: "NOT PARTICIPATED", value: 1, class: styles.not_participated  },
-    { label: "DISQUALIFIED", value: 2, class: styles.disqualified  },
-    { label: "LOST", value: 3, class: styles.disqualified  },
-    { label: "1ST PLACE", value: 4, class: styles.winner },
-    { label: "2ND PLACE", value: 5, class: styles.winner },
-    { label: "3RD PLACE", value: 6, class: styles.winner },
-    { label: "SHARED 1ST PLACE", value: 7, class: styles.winner },
-    { label: "SHARED 2ST PLACE", value: 8, class: styles.winner },
-    { label: "SHARED 3ST PLACE", value: 9, class: styles.winner },
-    // { label: "CANCELLED", value: 10, class: styles.disqualified },
+    { label: "CANCELLED",        value: 0,  class: styles.red   },
+    { label: "PENDING",          value: 1,  class: styles.blue  },
+    { label: "NOT PARTICIPATED", value: 2,  class: styles.gray  },
+    { label: "DISQUALIFIED",     value: 3,  class: styles.red   },
+    { label: "LOST",             value: 4,  class: styles.red   },
+    { label: "1ST PLACE",        value: 5,  class: styles.green },
+    { label: "2ND PLACE",        value: 6,  class: styles.green },
+    { label: "3RD PLACE",        value: 7,  class: styles.green },
+    { label: "SHARED 1ST PLACE", value: 8,  class: styles.green },
+    { label: "SHARED 2ST PLACE", value: 9,  class: styles.green },
+    { label: "SHARED 3ST PLACE", value: 10, class: styles.green },
 ];
 
 const Details = () => {
@@ -33,7 +32,7 @@ const Details = () => {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
     const [errors, insertError] = React.useContext(ErrorContext);
-    const [tournament, setTournament] = React.useState(null);
+    const [tournament, setTournament] = React.useState({});
     const [showModal, setShowModal] = React.useState(false);
     const config = {
         day: "2-digit", 
@@ -71,7 +70,9 @@ const Details = () => {
             navigate("/dashboard/administrator");
             insertError(message, "success");
         }
-        const onCancelError = (message) => insertError(message, "error");
+        const onCancelError = (message) => {
+            insertError(message, "error");
+        }
         cancelTournament(params.id, onCancelSuccess, onCancelError);
         setShowModal(false);
     }
@@ -174,10 +175,11 @@ const Details = () => {
 }
 
 const Row = ({ team, tournament }) => {
+    // - 1 because 1st item cancelled is removed
     const [result, setResult] = React.useState(RESULTS[team.result]);
     const [loading, setLoading] = React.useState(false);
-    const allow = new Date() >= new Date(tournament.event_date);
     const [errors, insertError] = React.useContext(ErrorContext);
+    const allow = new Date() >= new Date(tournament.event_date);
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -191,7 +193,7 @@ const Row = ({ team, tournament }) => {
 
     const onChange = async (value) => {
         setLoading(true);
-        updateResult({result: value.value, teamId: team.id, tournamentId: tournament.id}, onSuccess, onError);
+        updateResult({result: value.value === 0 ? 1 : value.value, teamId: team.id, tournamentId: tournament.id}, onSuccess, onError);
     }
 
     return (
@@ -205,11 +207,11 @@ const Row = ({ team, tournament }) => {
                 <td className={styles.row + " " + result.class}>
                     <InputField 
                         type="select"
-                        value={result}
-                        onChange={onChange}
                         options={RESULTS}
-                        icon={MdKeyboardArrowDown}
+                        value={result}
                         disabled={loading}
+                        onChange={onChange}
+                        icon={MdKeyboardArrowDown}
                     />
                 </td> 
             }

@@ -1,20 +1,16 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached, MdOutlinePersonAdd, MdOutlineClose } from "react-icons/md";
-
-import Modal from "../../shared/components/Modal";
-import { AuthenticationContext } from '../../providers/authentication';
 import { logout } from "../../shared/API";
-
-import styles from "./styles.module.scss";
-import ALERT from "../../assets/alert.svg";
 import { ErrorContext } from '../../providers/error';
+import { AuthenticationContext } from '../../providers/authentication';
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdLogout, MdCached, MdOutlinePersonAdd } from "react-icons/md";
+import styles from "./styles.module.scss";
 
-const Admin = (props) => {
+const Admin = () => {
     const navigate = useNavigate();
-    const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
     const [state, setState] = React.useContext(AuthenticationContext);
     const [errors, insertError] = React.useContext(ErrorContext);
+    const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
     
     const onLogout = (data) => {
         logout(

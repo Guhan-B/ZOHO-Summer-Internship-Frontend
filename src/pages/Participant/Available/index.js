@@ -1,11 +1,9 @@
 import React from 'react';
 import Loader from "react-spinners/MoonLoader";
-import { useNavigate } from "react-router-dom";
-
-import TournamentCard from '../../../shared/components/TournamentCard';
 import Fallback from '../../../shared/components/Fallback';
+import TournamentCard from '../../../shared/components/TournamentCard';
+import { useNavigate } from "react-router-dom";
 import { fetchAvaliableTournaments } from "../../../shared/API"
-
 import styles from "./styles.module.scss";
 
 const Avaliable = () => {
@@ -48,6 +46,7 @@ const Avaliable = () => {
         );
     }
 
+    // This computed but not used (for preventing errors)
     const modifiedTournaments = tournaments.map(tournament => {
         const copy = {...tournament, type: 0};
         if(new Date(copy.event_date) < new Date()) copy.type = 1;

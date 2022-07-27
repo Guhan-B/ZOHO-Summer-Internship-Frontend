@@ -160,7 +160,7 @@
     div input {
         text-align: center;
     }
-    &.winner div {
+    &.green div {
         background-color: rgba(46, 204, 112, 0.1) !important;
         border-color: #2ecc71 !important;
         input {
@@ -168,7 +168,7 @@
         }
     }
 
-    &.lost div, &.not_participated div {
+    &.gray div {
         background-color: rgba(127, 140, 141, 0.1) !important;
         border-color: #7f8c8d !important;
         input {
@@ -176,7 +176,7 @@
         }
     }
 
-    &.pending div {
+    &.blue div {
         background-color: rgba(52, 152, 219, 0.1) !important;
         border-color: #3498db !important;
         input {
@@ -184,7 +184,7 @@
         }
     }
 
-    &.disqualified div{
+    &.red div{
         background-color: rgba(231, 77, 60, 0.1) !important;
         border-color: #e74c3c !important;
         input {

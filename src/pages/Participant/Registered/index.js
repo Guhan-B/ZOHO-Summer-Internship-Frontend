@@ -1,11 +1,10 @@
 import React from 'react';
 import Loader from "react-spinners/MoonLoader";
-import { useNavigate } from "react-router-dom"
-import RegisteredCard from '../../../shared/components/RegisteredCard';
 import Fallback from '../../../shared/components/Fallback';
-import { fetchRegisteredTournaments } from "../../../shared/API";
+import RegisteredCard from '../../../shared/components/RegisteredCard';
+import { useNavigate } from "react-router-dom"
 import { AuthenticationContext } from "../../../providers/authentication";
-
+import { fetchRegisteredTournaments } from "../../../shared/API";
 import styles from "./styles.module.scss";
 
 const Registered = () => {

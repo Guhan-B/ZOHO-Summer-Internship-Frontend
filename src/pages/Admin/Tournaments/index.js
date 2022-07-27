@@ -1,11 +1,9 @@
 import React from 'react';
 import Loader from "react-spinners/MoonLoader";
-import { useNavigate } from "react-router-dom";
-
 import TournamentCard from '../../../shared/components/TournamentCard';
 import Fallback from '../../../shared/components/Fallback';
+import { useNavigate } from "react-router-dom";
 import { fetchTournaments } from "../../../shared/API"
-
 import styles from "./styles.module.scss";
 
 const Tournaments = () => {
@@ -22,10 +20,11 @@ const Tournaments = () => {
     const onError = (message) => {
         setLoading(false);
         setError(true);
-        alert(message);
     }
 
-    React.useEffect(() => { fetchTournaments(onSuccess, onError) }, []);
+    React.useEffect(() => { 
+        fetchTournaments(onSuccess, onError) 
+    }, []);
 
     if(loading === false && error === true) {
         return (

@@ -11,22 +11,22 @@
         padding: 0.5rem;
         margin-top: auto;
 
-        &.winner {
+        &.green {
             background-color: rgba(46, 204, 112, 0.2);
             color: #2ecc71;
         }
 
-        &.lost, &.not_participated {
+        &.gray {
             background-color: rgba(127, 140, 141, 0.2);
             color: #7f8c8d;
         }
 
-        &.pending {
+        &.blue {
             background-color: rgba(52, 152, 219, 0.2);
             color: #3498db;
         }
 
-        &.disqualified, &.cancelled {
+        &.red {
             background-color: rgba(231, 77, 60, 0.2);
             color: #e74c3c;
         }

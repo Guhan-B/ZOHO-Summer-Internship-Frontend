@@ -1,17 +1,16 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdPermIdentity, MdLogout, MdCached } from "react-icons/md";
-import { AuthenticationContext } from '../../providers/authentication';
 import { logout } from "../../shared/API";
 import { ErrorContext } from '../../providers/error';
-
+import { AuthenticationContext } from '../../providers/authentication';
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdPermIdentity, MdLogout, MdCached } from "react-icons/md";
 import styles from "./styles.module.scss";
 
-const Participant = (props) => {
+const Participant = () => {
     const navigate = useNavigate();
-    const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
     const [state, setState] = React.useContext(AuthenticationContext);
     const [errors, insertError] = React.useContext(ErrorContext);
+    const activeClass = ({isActive}) => isActive? styles.active + " " + styles.link : styles.link;
 
     const onLogout = (data) => {
         logout(

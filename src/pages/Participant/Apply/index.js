@@ -1,34 +1,29 @@
 import React from 'react';
-import validator from 'validator';
-import { useLocation, useNavigate } from "react-router-dom";
-
 import Button from '../../../shared/components/Button';
+import validator from 'validator';
 import InputField from '../../../shared/components/InputField';
-import { AuthenticationContext } from '../../../providers/authentication';
-import { applyTournament } from "../../../shared/API";
 import { ErrorContext } from '../../../providers/error';
-
+import { applyTournament } from "../../../shared/API";
+import { AuthenticationContext } from '../../../providers/authentication';
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./styles.module.scss";
 
 const Apply = () => {
     const routeState = useLocation().state;
-    const contextState = React.useContext(AuthenticationContext)[0];
     const navigate = useNavigate();
+    const contextState = React.useContext(AuthenticationContext)[0];
     const [errors, insertError] = React.useContext(ErrorContext);
-
     const [data, setData] = React.useState({ 
         tournamentId: routeState.id, 
         teamName: "", 
         emails: Array.apply(null, Array(routeState.teamSize)).map((_, idx) => idx === 0 ? contextState.user.email : ""),
         names: Array.apply(null, Array(routeState.teamSize)).map((_, idx) => idx === 0 ? contextState.user.name : ""),
     });
-
     const [error, setError] = React.useState({ 
         teamName: { value: false, message: "" }, 
         emails: Array.apply(null, Array(routeState.teamSize)).map(() => { return { value: false, message: "" } }),
         names: Array.apply(null, Array(routeState.teamSize)).map(() => { return { value: false, message: "" } })
     });
-
     const [loading, setLoading] = React.useState(false);
 
     const onSuccess = (message) => {
@@ -66,31 +61,22 @@ const Apply = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         const errorCopy = { 
             teamName: { value: false, message: "" }, 
             emails: Array.apply(null, Array(routeState.teamSize)).map(() => { return { value: false, message: "" } }),
             names: Array.apply(null, Array(routeState.teamSize)).map(() => { return { value: false, message: "" } }),
         };
-
-        if(data.teamName === "") errorCopy.teamName = { value: true, message: "Team Name cannot be empty" };
-
+        if(data.teamName === "") 
+            errorCopy.teamName = { value: true, message: "Team Name cannot be empty" };
         for(var i = 0; i < routeState.teamSize; i++) {
             if(validator.isEmail(data.emails[i]) === false) 
                 errorCopy.emails[i] = { value: true, message: "Email cannot be empty" };
             if(data.names[i] === "") 
                 errorCopy.names[i] = { value: true, message: "Name cannot be empty" };
         }
-        
         setError(errorCopy);
-
-        if(
-            errorCopy.teamName.value || 
-            errorCopy.emails.map(e => e.value).includes(true) || 
-            errorCopy.names.map(e => e.value).includes(true)
-        )
-            return console.log("DIE");;
-        
+        if(errorCopy.teamName.value || errorCopy.emails.map(e => e.value).includes(true) || errorCopy.names.map(e => e.value).includes(true))
+            return;
         setLoading(true);
         applyTournament(data, onSuccess, onError);
     }
