@@ -7,7 +7,7 @@ const ErrorProvider = (props) => {
 
     const insertError = (message, type) => {
         let errorsCopy = [...errors];
-        if(errorsCopy.length === 3) errorsCopy.pop();
+        if(errorsCopy.length === 1) errorsCopy.pop();
         errorsCopy = [{ message, type }, ...errorsCopy];
         setErrors(errorsCopy);
 

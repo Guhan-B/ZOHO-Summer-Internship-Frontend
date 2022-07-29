@@ -1,14 +1,25 @@
 import axios from 'axios';
+import { detectBrowser, detectOS } from "../Utils/meta";
 
 export const login = async (data, onSuccess, onError) => {
     try {
         const body = {
             email: data.email,
             password: data.password,
+            browser: detectBrowser(),
+            OS: detectOS(),
         };
 
         const response = await axios.post("/authentication/login", body);
-        onSuccess("Login successfull", response.data.data.user);
+        
+        document.cookie.split(";").forEach(cookie => {
+            const [key, value] = cookie.split("=");
+            if(key === "CSRF-TOKEN") {
+                axios.defaults.headers["X-CSRF-Token"] = value;
+            }
+        });
+
+        onSuccess("You have been successfully logged in", response.data.data.user);
     }
     catch(e) {
         const error = e?.response?.data?.error;
@@ -53,7 +64,10 @@ export const reset = async (data, onSuccess, onError) => {
 export const logout = async (data, onSuccess, onError) => {
     try {
         const response = await axios.post("/authentication/logout", data);
-        onSuccess(response.data.data.message);
+        if(response.data.data.redirect)
+            onSuccess(true, "You have been logged out successfully");
+        else
+            onSuccess(false, "Session(s) terminated successfully");
     }
     catch(e) {
         onError("Unable to process request. Try again");
@@ -63,6 +77,14 @@ export const logout = async (data, onSuccess, onError) => {
 export const fetchUser = async (onSuccess, onError) => {
     try {
         const response  = await axios.get("/authentication/user");
+
+        document.cookie.split(";").forEach(cookie => {
+            const [key, value] = cookie.split("=");
+            if(key === "CSRF-TOKEN") {
+                axios.defaults.headers["X-CSRF-Token"] = value;
+            }
+        });
+
         onSuccess("User loaded successfully", response.data.data.user);
     }
     catch(e) {
@@ -147,7 +169,7 @@ export const updateResult = async (data, onSuccess, onError) => {
 
 export const fetchAvaliableTournaments = async (onSuccess, onError) => {
     try {
-        const response = await axios.post(`/participant/available/`, { today: new Date().toGMTString() });
+        const response = await axios.get(`/participant/available/`);
         return onSuccess("Avaliable trounaments loaded successfully", response.data.data.tournaments);
     }
     catch(e) {
@@ -221,6 +243,16 @@ export const addAdministrators = async (data, onSuccess, onError) => {
         if(error && error?.code === "VALIDATION_FAILED")
             return onError(error.message, error.errors);
 
+        onError("Unable to process request. Try again")
+    }
+}
+
+export const fetchSessions = async (onSuccess, onError) => {
+    try {
+        const response = await axios.get("/authentication/sessions");
+        onSuccess("Session loaded successfully", response.data.data)
+    }
+    catch(e) {
         onError("Unable to process request. Try again")
     }
 }

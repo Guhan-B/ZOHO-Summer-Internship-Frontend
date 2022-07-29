@@ -19,6 +19,7 @@ import Add from '../../pages/Admin/Add';
 import { AuthenticationContext } from '../../providers/authentication';
 import { fetchUser } from "../API";
 import Alerts from '../components/Alerts';
+import Session from '../../pages/Sessions';
 
 const Router = () => {
     const [state, setState] = React.useContext(AuthenticationContext);
@@ -63,6 +64,7 @@ const Router = () => {
                                 <Route path="avaliable/:id" element={<Apply />} />
                                 <Route path="registered" element={<Registered />} />
                                 <Route path="edit-profile" element={<EditProfile />} />
+                                <Route path="sessions" element={<Session />} />
                             </Route>
                             <Route path="administrator" element={<Admin />}>
                                 <Route index element={<Navigate to="tournaments" replace />} />
@@ -71,6 +73,7 @@ const Router = () => {
                                 <Route path="tournaments/:id/edit" element={<Edit />} />
                                 <Route path="create" element={<Create />} />
                                 <Route path="add" element={<Add />} />
+                                <Route path="sessions" element={<Session />} />
                             </Route>
                     </Route>
                 </Routes>

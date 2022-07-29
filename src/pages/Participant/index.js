@@ -3,7 +3,7 @@ import { logout } from "../../shared/API";
 import { ErrorContext } from '../../providers/error';
 import { AuthenticationContext } from '../../providers/authentication';
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdPermIdentity, MdLogout, MdCached } from "react-icons/md";
+import { MdEvent, MdOutlineMenu, MdOutlineAvTimer, MdPermIdentity, MdLogout, MdLanguage, MdCached } from "react-icons/md";
 import styles from "./styles.module.scss";
 
 const Participant = () => {
@@ -15,7 +15,7 @@ const Participant = () => {
     const onLogout = (data) => {
         logout(
             data,
-            (message) => {
+            (redirect, message) => {
                 setState({ user: null, status: false });
                 navigate("/");
                 insertError(message, "success")
@@ -48,13 +48,13 @@ const Participant = () => {
                         <MdCached className={styles.icon}/>
                         <p>Reset Password</p>                        
                     </NavLink>
-                    <span className={styles.link} onClick={() => onLogout({all: false})}>                        
+                    <NavLink to="sessions" className={activeClass}>                        
+                        <MdLanguage className={styles.icon}/>
+                        <p>Active Sessions</p>                        
+                    </NavLink>
+                    <span className={styles.link} onClick={() => onLogout({current: true})}>                        
                         <MdLogout className={styles.icon}/>
                         <p>Logout</p>                        
-                    </span>
-                    <span className={styles.link} onClick={() => onLogout({all: true})}>                        
-                        <MdLogout className={styles.icon}/>
-                        <p>Logout From All Devices</p>                        
                     </span>
                 </div>
             </div>

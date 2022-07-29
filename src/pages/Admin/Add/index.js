@@ -77,7 +77,6 @@ const Add = () => {
             <h4>Create new administrators</h4>
         </header>
         <main>
-            <button className={styles.add} onClick={onAdd}><MdAdd size={30}/></button>
             <form autoComplete="off" onSubmit={onSubmit}>
                 {
                     emails.map((email, idx) => 
@@ -101,7 +100,10 @@ const Add = () => {
                         </div>
                     )
                 }
-                <Button label="Create Administrator(s)" type="submit" variant="primary" loading={loading}/>
+                <div className={styles.form_controls}>
+                    <Button label="Create Administrator(s)" type="submit" variant="primary" loading={loading}/>
+                    <Button label="Add New Field" onClick={onAdd}  type="button"/>
+                </div>
             </form>
         </main>
     </div>
