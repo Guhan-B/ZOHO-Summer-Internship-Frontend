@@ -15,15 +15,15 @@ import ALERT from "../../../assets/alert.svg";
 const RESULTS = [
     { label: "CANCELLED",        value: 0,  class: styles.red   },
     { label: "PENDING",          value: 1,  class: styles.blue  },
-    { label: "NOT PARTICIPATED", value: 2,  class: styles.gray  },
-    { label: "DISQUALIFIED",     value: 3,  class: styles.red   },
-    { label: "LOST",             value: 4,  class: styles.red   },
-    { label: "1ST PLACE",        value: 5,  class: styles.green },
-    { label: "2ND PLACE",        value: 6,  class: styles.green },
-    { label: "3RD PLACE",        value: 7,  class: styles.green },
-    { label: "SHARED 1ST PLACE", value: 8,  class: styles.green },
-    { label: "SHARED 2ST PLACE", value: 9,  class: styles.green },
-    { label: "SHARED 3ST PLACE", value: 10, class: styles.green },
+    { label: "1ST PLACE",        value: 2,  class: styles.green },
+    { label: "SHARED 1ST PLACE", value: 3,  class: styles.green },
+    { label: "2ND PLACE",        value: 4,  class: styles.green },
+    { label: "SHARED 2ST PLACE", value: 5,  class: styles.green },
+    { label: "3RD PLACE",        value: 6,  class: styles.green },
+    { label: "SHARED 3ST PLACE", value: 7,  class: styles.green  },
+    { label: "NOT PARTICIPATED", value: 8,  class: styles.gray  },
+    { label: "DISQUALIFIED",     value: 9,  class: styles.red   },
+    { label: "LOST",             value: 10, class: styles.red  },
 ];
 
 const Details = () => {

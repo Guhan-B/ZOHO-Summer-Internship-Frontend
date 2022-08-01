@@ -15,7 +15,7 @@ const Admin = () => {
     const onLogout = (data) => {
         logout(
             data,
-            (message) => {
+            (redirect, message) => {
                 setState({ user: null, status: false });
                 navigate("/");
                 insertError(message, "success")
