@@ -160,6 +160,7 @@ const Details = () => {
                                 <th>Leader Mobile</th>
                                 { 
                                     new Date() >= new Date(tournament.event_date) && 
+                                    tournament.cancelled === 0 &&
                                     <th>Result</th> 
                                 }
                             </tr>
@@ -179,7 +180,7 @@ const Row = ({ team, tournament }) => {
     const [result, setResult] = React.useState(RESULTS[team.result]);
     const [loading, setLoading] = React.useState(false);
     const [errors, insertError] = React.useContext(ErrorContext);
-    const allow = new Date() >= new Date(tournament.event_date);
+    const allow = new Date() >= new Date(tournament.event_date) && tournament.cancelled === 0;
 
     const onSuccess = (message, data) => {
         setLoading(false);
@@ -207,7 +208,7 @@ const Row = ({ team, tournament }) => {
                 <td className={styles.row + " " + result.class}>
                     <InputField 
                         type="select"
-                        options={RESULTS}
+                        options={RESULTS.filter(i => i.value !== 0)}
                         value={result}
                         disabled={loading}
                         onChange={onChange}
